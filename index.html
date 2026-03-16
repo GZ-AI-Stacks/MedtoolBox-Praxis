@@ -1,0 +1,2634 @@
+<!DOCTYPE html>
+<html lang="de">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>MedToolbox - Medizinische Offline-App</title>
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link href="https://fonts.googleapis.com/css2?family=Space+Grotesk:wght@400;500;600;700&family=Inter:wght@300;400;500;600;700&display=swap" rel="stylesheet">
+<style>
+/* ========== RESET & BASE ========== */
+*, *::before, *::after { margin: 0; padding: 0; box-sizing: border-box; }
+:root {
+  --bg-primary: #0f172a;
+  --bg-secondary: #1e293b;
+  --bg-card: #1e293b;
+  --bg-card-hover: #334155;
+  --bg-input: #0f172a;
+  --accent: #38bdf8;
+  --accent-hover: #7dd3fc;
+  --accent-glow: rgba(56, 189, 248, 0.15);
+  --danger: #f87171;
+  --warning: #fbbf24;
+  --success: #4ade80;
+  --text-primary: #f1f5f9;
+  --text-secondary: #94a3b8;
+  --text-muted: #64748b;
+  --border: #334155;
+  --radius: 12px;
+  --radius-sm: 8px;
+  --shadow: 0 4px 24px rgba(0,0,0,0.3);
+  --transition: 0.2s ease;
+  --zoom: 1;
+}
+
+/* ========== THEMES: DARK ========== */
+[data-theme="nachtschicht"] {
+  --bg-primary:#0f172a;--bg-secondary:#1e293b;--bg-card:#1e293b;--bg-card-hover:#334155;--bg-input:#0f172a;
+  --accent:#38bdf8;--accent-hover:#7dd3fc;--accent-glow:rgba(56,189,248,0.15);
+  --text-primary:#f1f5f9;--text-secondary:#94a3b8;--text-muted:#64748b;--border:#334155;
+  --shadow:0 4px 24px rgba(0,0,0,0.3);--logo-bg:linear-gradient(135deg,#38bdf8,#818cf8);
+}
+[data-theme="op-saal"] {
+  --bg-primary:#0a1a1a;--bg-secondary:#0f2b2b;--bg-card:#0f2b2b;--bg-card-hover:#1a3d3d;--bg-input:#0a1a1a;
+  --accent:#2dd4bf;--accent-hover:#5eead4;--accent-glow:rgba(45,212,191,0.15);
+  --text-primary:#f0fdfa;--text-secondary:#99f6e4;--text-muted:#5eead4;--border:#1a3d3d;
+  --shadow:0 4px 24px rgba(0,0,0,0.3);--logo-bg:linear-gradient(135deg,#2dd4bf,#06b6d4);
+}
+[data-theme="kardiologie"] {
+  --bg-primary:#1a0a0f;--bg-secondary:#2d1520;--bg-card:#2d1520;--bg-card-hover:#3d2030;--bg-input:#1a0a0f;
+  --accent:#fb7185;--accent-hover:#fda4af;--accent-glow:rgba(251,113,133,0.15);
+  --text-primary:#fff1f2;--text-secondary:#fecdd3;--text-muted:#f9a8d4;--border:#3d2030;
+  --shadow:0 4px 24px rgba(0,0,0,0.3);--logo-bg:linear-gradient(135deg,#fb7185,#f472b6);
+}
+[data-theme="radiologie"] {
+  --bg-primary:#0f0a1e;--bg-secondary:#1a1530;--bg-card:#1a1530;--bg-card-hover:#2a2045;--bg-input:#0f0a1e;
+  --accent:#a78bfa;--accent-hover:#c4b5fd;--accent-glow:rgba(167,139,250,0.15);
+  --text-primary:#f5f3ff;--text-secondary:#c4b5fd;--text-muted:#8b5cf6;--border:#2a2045;
+  --shadow:0 4px 24px rgba(0,0,0,0.3);--logo-bg:linear-gradient(135deg,#a78bfa,#818cf8);
+}
+
+/* ========== THEMES: LIGHT ========== */
+[data-theme="nachtschicht"][data-mode="light"] {
+  --bg-primary:#f1f5f9;--bg-secondary:#ffffff;--bg-card:#ffffff;--bg-card-hover:#e2e8f0;--bg-input:#f1f5f9;
+  --accent:#0284c7;--accent-hover:#0369a1;--accent-glow:rgba(2,132,199,0.1);
+  --text-primary:#0f172a;--text-secondary:#475569;--text-muted:#94a3b8;--border:#e2e8f0;
+  --shadow:0 4px 24px rgba(0,0,0,0.08);
+}
+[data-theme="op-saal"][data-mode="light"] {
+  --bg-primary:#f0fdfa;--bg-secondary:#ffffff;--bg-card:#ffffff;--bg-card-hover:#ccfbf1;--bg-input:#f0fdfa;
+  --accent:#0d9488;--accent-hover:#0f766e;--accent-glow:rgba(13,148,136,0.1);
+  --text-primary:#042f2e;--text-secondary:#115e59;--text-muted:#5eead4;--border:#ccfbf1;
+  --shadow:0 4px 24px rgba(0,0,0,0.08);
+}
+[data-theme="kardiologie"][data-mode="light"] {
+  --bg-primary:#fff1f2;--bg-secondary:#ffffff;--bg-card:#ffffff;--bg-card-hover:#ffe4e6;--bg-input:#fff1f2;
+  --accent:#e11d48;--accent-hover:#be123c;--accent-glow:rgba(225,29,72,0.1);
+  --text-primary:#1a0a0f;--text-secondary:#881337;--text-muted:#f9a8d4;--border:#ffe4e6;
+  --shadow:0 4px 24px rgba(0,0,0,0.08);
+}
+[data-theme="radiologie"][data-mode="light"] {
+  --bg-primary:#f5f3ff;--bg-secondary:#ffffff;--bg-card:#ffffff;--bg-card-hover:#ede9fe;--bg-input:#f5f3ff;
+  --accent:#7c3aed;--accent-hover:#6d28d9;--accent-glow:rgba(124,58,237,0.1);
+  --text-primary:#0f0a1e;--text-secondary:#5b21b6;--text-muted:#a78bfa;--border:#ede9fe;
+  --shadow:0 4px 24px rgba(0,0,0,0.08);
+}
+
+/* Light mode overrides for danger/warning/success */
+[data-mode="light"] { --danger:#dc2626;--warning:#d97706;--success:#16a34a; }
+html { font-size: calc(16px * var(--zoom)); }
+body {
+  font-family: 'Inter', 'Segoe UI', system-ui, -apple-system, sans-serif;
+  background: var(--bg-primary);
+  color: var(--text-primary);
+  min-height: 100vh;
+  display: flex;
+  overflow: hidden;
+}
+
+/* ========== SCROLLBAR ========== */
+::-webkit-scrollbar { width: 6px; }
+::-webkit-scrollbar-track { background: transparent; }
+::-webkit-scrollbar-thumb { background: var(--border); border-radius: 3px; }
+::-webkit-scrollbar-thumb:hover { background: var(--text-muted); }
+
+/* ========== SIDEBAR ========== */
+.sidebar {
+  width: 260px;
+  min-width: 260px;
+  background: var(--bg-secondary);
+  border-right: 1px solid var(--border);
+  display: flex;
+  flex-direction: column;
+  height: 100vh;
+  transition: var(--transition);
+  z-index: 100;
+}
+.sidebar-header {
+  padding: 20px;
+  border-bottom: 1px solid var(--border);
+  display: flex;
+  align-items: center;
+  gap: 12px;
+}
+.sidebar-logo-old-removed {
+  /* removed - now defined in sidebar-footer section */
+}
+.sidebar-title { font-size: 1.2rem; font-weight: 700; }
+.sidebar-subtitle { font-size: 0.7rem; color: var(--text-muted); text-transform: uppercase; letter-spacing: 1px; }
+
+.sidebar-nav { flex: 1; overflow-y: auto; padding: 12px; }
+.nav-section { margin-bottom: 8px; }
+.nav-section-title {
+  font-size: 0.65rem; text-transform: uppercase; letter-spacing: 1.5px;
+  color: var(--text-muted); padding: 8px 12px 4px; font-weight: 600;
+}
+.nav-item {
+  display: flex; align-items: center; gap: 12px;
+  padding: 10px 12px; border-radius: var(--radius-sm);
+  cursor: pointer; transition: var(--transition);
+  color: var(--text-secondary); font-size: 0.9rem;
+  border: 1px solid transparent;
+}
+.nav-item:hover { background: var(--bg-card-hover); color: var(--text-primary); }
+.nav-item.active {
+  background: var(--accent-glow); color: var(--accent);
+  border-color: rgba(56, 189, 248, 0.2);
+}
+.nav-icon { font-size: 1.2rem; width: 24px; text-align: center; }
+.nav-badge {
+  margin-left: auto; font-size: 0.65rem; padding: 2px 8px;
+  border-radius: 10px; background: var(--accent-glow); color: var(--accent);
+}
+
+.sidebar-footer {
+  padding: 12px 16px; border-top: 1px solid var(--border);
+  font-size: 0.75rem; color: var(--text-muted); text-align: center;
+}
+.sidebar-logo {
+  width: 40px; height: 40px;
+  display: flex; align-items: center; justify-content: center;
+  flex-shrink: 0;
+}
+.theme-btn {
+  display: flex; align-items: center; justify-content: center; gap: 4px;
+  padding: 5px 8px; border-radius: 6px; border: 1px solid var(--border);
+  background: var(--bg-input); color: var(--text-secondary);
+  font-size: 0.7rem; cursor: pointer; transition: var(--transition);
+}
+.theme-btn:hover { border-color: var(--accent); color: var(--text-primary); }
+.theme-btn.active { border-color: var(--accent); background: var(--accent-glow); color: var(--accent); }
+.ctrl-btn {
+  padding: 4px 10px; border-radius: 6px; border: 1px solid var(--border);
+  background: var(--bg-input); color: var(--text-secondary);
+  font-size: 0.75rem; cursor: pointer; transition: var(--transition);
+}
+.ctrl-btn:hover { border-color: var(--accent); color: var(--text-primary); }
+
+/* ========== MOBILE MENU ========== */
+.mobile-header {
+  display: none;
+  position: fixed; top: 0; left: 0; right: 0;
+  background: var(--bg-secondary); border-bottom: 1px solid var(--border);
+  padding: 12px 16px; z-index: 101;
+  align-items: center; gap: 12px;
+}
+.menu-toggle {
+  background: none; border: none; color: var(--text-primary);
+  font-size: 1.5rem; cursor: pointer; padding: 4px;
+}
+.sidebar-overlay {
+  display: none; position: fixed; inset: 0;
+  background: rgba(0,0,0,0.5); z-index: 99;
+}
+
+/* ========== MAIN CONTENT ========== */
+.main {
+  flex: 1; overflow-y: auto; height: 100vh;
+  padding: 32px;
+}
+.page { display: none; animation: fadeIn 0.3s ease; }
+.page.active { display: block; }
+@keyframes fadeIn { from { opacity: 0; transform: translateY(8px); } to { opacity: 1; transform: translateY(0); } }
+
+.page-header { margin-bottom: 28px; }
+.page-title { font-size: 1.8rem; font-weight: 700; margin-bottom: 4px; }
+.page-desc { color: var(--text-secondary); font-size: 0.95rem; }
+
+/* ========== CARDS ========== */
+.card-grid {
+  display: grid;
+  grid-template-columns: repeat(auto-fill, minmax(260px, 1fr));
+  gap: 16px;
+}
+.card {
+  background: var(--bg-card);
+  border: 1px solid var(--border);
+  border-radius: var(--radius);
+  padding: 20px;
+  cursor: pointer;
+  transition: var(--transition);
+}
+.card:hover {
+  border-color: var(--accent);
+  transform: translateY(-2px);
+  box-shadow: 0 8px 32px rgba(56, 189, 248, 0.1);
+}
+.card-icon { font-size: 2rem; margin-bottom: 12px; }
+.card-title { font-size: 1.05rem; font-weight: 600; margin-bottom: 6px; }
+.card-desc { font-size: 0.85rem; color: var(--text-secondary); line-height: 1.5; }
+.card-badge {
+  display: inline-block; margin-top: 10px; font-size: 0.7rem;
+  padding: 3px 10px; border-radius: 10px;
+  background: var(--accent-glow); color: var(--accent);
+}
+
+/* ========== STAT CARDS ========== */
+.stats-grid {
+  display: grid;
+  grid-template-columns: repeat(auto-fill, minmax(200px, 1fr));
+  gap: 16px; margin-bottom: 28px;
+}
+.stat-card {
+  background: var(--bg-card); border: 1px solid var(--border);
+  border-radius: var(--radius); padding: 20px;
+}
+.stat-value { font-size: 1.8rem; font-weight: 700; color: var(--accent); }
+.stat-label { font-size: 0.8rem; color: var(--text-secondary); margin-top: 4px; }
+
+/* ========== RECHNER ========== */
+.calc-container {
+  display: grid;
+  grid-template-columns: 300px 1fr;
+  gap: 24px;
+}
+.calc-list {
+  background: var(--bg-card); border: 1px solid var(--border);
+  border-radius: var(--radius); overflow: hidden;
+}
+.calc-list-header {
+  padding: 16px; font-weight: 600; border-bottom: 1px solid var(--border);
+  font-size: 0.9rem;
+}
+.calc-item {
+  padding: 12px 16px; cursor: pointer;
+  border-bottom: 1px solid var(--border);
+  transition: var(--transition); font-size: 0.9rem;
+  display: flex; align-items: center; gap: 10px;
+}
+.calc-item:last-child { border-bottom: none; }
+.calc-item:hover { background: var(--bg-card-hover); }
+.calc-item.active { background: var(--accent-glow); color: var(--accent); }
+
+.calc-panel {
+  background: var(--bg-card); border: 1px solid var(--border);
+  border-radius: var(--radius); padding: 24px;
+}
+.calc-title { font-size: 1.2rem; font-weight: 600; margin-bottom: 4px; }
+.calc-subtitle { font-size: 0.85rem; color: var(--text-secondary); margin-bottom: 20px; }
+
+.form-group { margin-bottom: 16px; }
+.form-label {
+  display: block; font-size: 0.8rem; color: var(--text-secondary);
+  margin-bottom: 6px; font-weight: 500;
+}
+.form-row { display: flex; gap: 12px; align-items: end; }
+.form-row .form-group { flex: 1; }
+
+.form-input, .form-select {
+  width: 100%; padding: 10px 14px;
+  background: var(--bg-input); border: 1px solid var(--border);
+  border-radius: var(--radius-sm); color: var(--text-primary);
+  font-size: 0.95rem; transition: var(--transition);
+  outline: none;
+}
+.form-input:focus, .form-select:focus {
+  border-color: var(--accent);
+  box-shadow: 0 0 0 3px var(--accent-glow);
+}
+.form-input::placeholder { color: var(--text-muted); }
+.form-select option { background: var(--bg-secondary); }
+.form-unit {
+  font-size: 0.8rem; color: var(--text-muted);
+  min-width: 40px; padding-bottom: 10px;
+}
+
+.btn {
+  display: inline-flex; align-items: center; justify-content: center; gap: 8px;
+  padding: 10px 20px; border-radius: var(--radius-sm);
+  font-size: 0.9rem; font-weight: 600; cursor: pointer;
+  border: none; transition: var(--transition);
+}
+.btn-primary { background: var(--accent); color: var(--bg-primary); }
+.btn-primary:hover { background: var(--accent-hover); }
+.btn-secondary { background: var(--bg-card-hover); color: var(--text-primary); }
+.btn-secondary:hover { background: var(--border); }
+.btn-group { display: flex; gap: 8px; margin-top: 8px; }
+
+.result-box {
+  margin-top: 20px; padding: 20px;
+  background: var(--accent-glow); border: 1px solid rgba(56, 189, 248, 0.2);
+  border-radius: var(--radius); display: none;
+}
+.result-box.visible { display: block; }
+.result-label { font-size: 0.8rem; color: var(--text-secondary); margin-bottom: 4px; }
+.result-value { font-size: 1.6rem; font-weight: 700; color: var(--accent); }
+.result-interpretation {
+  margin-top: 10px; padding-top: 10px; border-top: 1px solid rgba(56, 189, 248, 0.2);
+  font-size: 0.85rem; color: var(--text-secondary); line-height: 1.6;
+}
+.result-tag {
+  display: inline-block; padding: 2px 10px; border-radius: 10px;
+  font-size: 0.75rem; font-weight: 600; margin-top: 6px;
+}
+.tag-normal { background: rgba(74, 222, 128, 0.15); color: var(--success); }
+.tag-warning { background: rgba(251, 191, 36, 0.15); color: var(--warning); }
+.tag-danger { background: rgba(248, 113, 113, 0.15); color: var(--danger); }
+
+/* ========== PLACEHOLDER ========== */
+.placeholder-page {
+  display: flex; flex-direction: column; align-items: center;
+  justify-content: center; min-height: 50vh; text-align: center;
+}
+.placeholder-icon { font-size: 4rem; margin-bottom: 16px; opacity: 0.5; }
+.placeholder-text { color: var(--text-muted); font-size: 1rem; }
+
+/* ========== SEARCH ========== */
+.search-box {
+  position: relative; margin-bottom: 20px;
+}
+.search-box .form-input { padding-left: 40px; }
+.search-icon {
+  position: absolute; left: 14px; top: 50%; transform: translateY(-50%);
+  color: var(--text-muted); font-size: 0.9rem;
+}
+
+/* ========== RESPONSIVE ========== */
+@media (max-width: 900px) {
+  .calc-container { grid-template-columns: 1fr; }
+}
+@media (max-width: 768px) {
+  .sidebar {
+    position: fixed; left: -280px; top: 0; bottom: 0;
+    width: 280px; box-shadow: var(--shadow);
+  }
+  .sidebar.open { left: 0; }
+  .sidebar-overlay.open { display: block; }
+  .mobile-header { display: flex; }
+  .main { padding: 72px 16px 16px; }
+  .card-grid { grid-template-columns: 1fr; }
+  .stats-grid { grid-template-columns: repeat(2, 1fr); }
+}
+
+/* ============================================================
+   DESIGN UPGRADE: Expressive, Mutig, Atmosphärisch
+   ============================================================ */
+
+/* 1. EXPRESSIVE TYPOGRAFIE */
+.page-title, .sidebar-title, .stat-value, .result-value, .calc-title {
+  font-family: 'Space Grotesk', 'Inter', system-ui, sans-serif;
+  letter-spacing: -0.02em;
+}
+.page-title {
+  font-size: 2rem;
+  font-weight: 700;
+  background: linear-gradient(135deg, var(--accent), var(--accent-hover));
+  -webkit-background-clip: text;
+  -webkit-text-fill-color: transparent;
+  background-clip: text;
+}
+.sidebar-title {
+  font-size: 1.3rem;
+  font-weight: 700;
+  letter-spacing: -0.01em;
+}
+.stat-value {
+  font-size: 2rem;
+  font-weight: 700;
+  letter-spacing: -0.03em;
+}
+.nav-section-title {
+  font-family: 'Space Grotesk', 'Inter', system-ui, sans-serif;
+  font-size: 0.65rem;
+  font-weight: 600;
+  letter-spacing: 2px;
+}
+
+/* 2. MICRO-ANIMATIONEN */
+@keyframes subtlePulse {
+  0%, 100% { opacity: 1; }
+  50% { opacity: 0.7; }
+}
+@keyframes shimmer {
+  0% { background-position: -200% center; }
+  100% { background-position: 200% center; }
+}
+@keyframes glowPulse {
+  0%, 100% { box-shadow: 0 0 20px var(--accent-glow); }
+  50% { box-shadow: 0 0 40px var(--accent-glow), 0 0 60px rgba(56,189,248,0.05); }
+}
+.card {
+  transition: all 0.3s cubic-bezier(0.4, 0, 0.2, 1);
+  position: relative;
+  overflow: hidden;
+}
+.card::before {
+  content: '';
+  position: absolute;
+  top: 0;
+  left: -100%;
+  width: 100%;
+  height: 100%;
+  background: linear-gradient(90deg, transparent, var(--accent-glow), transparent);
+  transition: left 0.5s ease;
+  pointer-events: none;
+}
+.card:hover::before {
+  left: 100%;
+}
+.card:hover {
+  transform: translateY(-4px) scale(1.01);
+  box-shadow: 0 12px 40px rgba(0,0,0,0.2), 0 0 20px var(--accent-glow);
+}
+.nav-item {
+  transition: all 0.25s cubic-bezier(0.4, 0, 0.2, 1);
+  position: relative;
+}
+.nav-item::after {
+  content: '';
+  position: absolute;
+  left: 0;
+  top: 50%;
+  transform: translateY(-50%);
+  width: 3px;
+  height: 0;
+  background: var(--accent);
+  border-radius: 0 3px 3px 0;
+  transition: height 0.25s ease;
+}
+.nav-item:hover::after, .nav-item.active::after {
+  height: 60%;
+}
+.nav-item:hover {
+  transform: translateX(4px);
+  background: var(--bg-card-hover);
+}
+.nav-item.active {
+  transform: translateX(4px);
+}
+.btn-primary {
+  position: relative;
+  overflow: hidden;
+  transition: all 0.3s ease;
+}
+.btn-primary::after {
+  content: '';
+  position: absolute;
+  inset: 0;
+  background: linear-gradient(135deg, rgba(255,255,255,0.2), transparent);
+  opacity: 0;
+  transition: opacity 0.3s;
+}
+.btn-primary:hover::after { opacity: 1; }
+.btn-primary:hover {
+  transform: translateY(-1px);
+  box-shadow: 0 4px 15px var(--accent-glow);
+}
+.stat-card {
+  transition: all 0.3s cubic-bezier(0.4, 0, 0.2, 1);
+}
+.stat-card:hover {
+  transform: translateY(-3px);
+  box-shadow: 0 8px 30px rgba(0,0,0,0.15);
+  border-color: var(--accent);
+}
+.result-box.visible {
+  animation: resultSlideIn 0.4s cubic-bezier(0.4, 0, 0.2, 1);
+}
+@keyframes resultSlideIn {
+  from { opacity: 0; transform: translateY(12px); }
+  to { opacity: 1; transform: translateY(0); }
+}
+.form-input:focus, .form-select:focus {
+  transform: translateY(-1px);
+}
+.search-box .form-input:focus {
+  box-shadow: 0 0 0 3px var(--accent-glow), 0 4px 20px var(--accent-glow);
+}
+
+/* 3. ATMOSPHÄRISCHE HINTERGRÜNDE */
+.main {
+  position: relative;
+}
+.main::before {
+  content: '';
+  position: fixed;
+  top: -50%;
+  right: -30%;
+  width: 80%;
+  height: 80%;
+  background: radial-gradient(circle, var(--accent-glow) 0%, transparent 70%);
+  pointer-events: none;
+  z-index: 0;
+  animation: bgFloat 30s ease-in-out infinite;
+}
+.main::after {
+  content: '';
+  position: fixed;
+  bottom: -40%;
+  left: -20%;
+  width: 60%;
+  height: 60%;
+  background: radial-gradient(circle, rgba(167,139,250,0.06) 0%, transparent 70%);
+  pointer-events: none;
+  z-index: 0;
+  animation: bgFloat2 25s ease-in-out infinite;
+}
+@keyframes bgFloat {
+  0%, 100% { transform: translate(0, 0) rotate(0deg); }
+  33% { transform: translate(30px, -20px) rotate(2deg); }
+  66% { transform: translate(-20px, 15px) rotate(-1deg); }
+}
+@keyframes bgFloat2 {
+  0%, 100% { transform: translate(0, 0); }
+  50% { transform: translate(20px, -30px); }
+}
+.main > .page { position: relative; z-index: 1; }
+.sidebar {
+  background: var(--bg-secondary);
+  backdrop-filter: blur(20px);
+  -webkit-backdrop-filter: blur(20px);
+}
+.sidebar-header {
+  position: relative;
+  overflow: hidden;
+}
+.sidebar-header::after {
+  content: '';
+  position: absolute;
+  bottom: -1px;
+  left: 16px;
+  right: 16px;
+  height: 1px;
+  background: linear-gradient(90deg, transparent, var(--accent), transparent);
+}
+.calc-panel, .card {
+  backdrop-filter: blur(8px);
+  -webkit-backdrop-filter: blur(8px);
+}
+[data-mode="light"] .main::before {
+  background: radial-gradient(circle, rgba(56,189,248,0.06) 0%, transparent 70%);
+}
+[data-mode="light"] .main::after {
+  background: radial-gradient(circle, rgba(167,139,250,0.04) 0%, transparent 70%);
+}
+
+/* 4. ASYMMETRISCHE LAYOUTS – Dashboard */
+.dashboard-hero {
+  display: grid;
+  grid-template-columns: 1.4fr 1fr;
+  gap: 16px;
+  margin-bottom: 28px;
+}
+.dashboard-hero .stat-card:first-child {
+  grid-row: span 2;
+  display: flex;
+  flex-direction: column;
+  justify-content: center;
+  padding: 28px;
+  border: 1px solid var(--accent);
+  background: linear-gradient(135deg, var(--bg-card), var(--accent-glow));
+  position: relative;
+  overflow: hidden;
+}
+.dashboard-hero .stat-card:first-child::before {
+  content: '';
+  position: absolute;
+  top: -50%;
+  right: -50%;
+  width: 100%;
+  height: 100%;
+  background: radial-gradient(circle, var(--accent-glow) 0%, transparent 60%);
+  animation: glowPulse 4s ease-in-out infinite;
+  pointer-events: none;
+}
+.dashboard-hero .stat-card:first-child .stat-value {
+  font-size: 2.8rem;
+}
+@media (max-width: 768px) {
+  .dashboard-hero { grid-template-columns: 1fr; }
+  .dashboard-hero .stat-card:first-child { grid-row: span 1; }
+  .dashboard-hero .stat-card:first-child .stat-value { font-size: 2rem; }
+}
+
+/* 5. SIDEBAR GRADIENT ACCENT */
+.sidebar-logo {
+  position: relative;
+}
+.sidebar-logo::after {
+  content: '';
+  position: absolute;
+  inset: -4px;
+  border-radius: 50%;
+  background: conic-gradient(from 0deg, var(--accent), transparent, var(--accent));
+  opacity: 0.3;
+  animation: logoSpin 8s linear infinite;
+  z-index: -1;
+}
+@keyframes logoSpin {
+  to { transform: rotate(360deg); }
+}
+.sidebar-footer {
+  position: relative;
+}
+.sidebar-footer::before {
+  content: '';
+  position: absolute;
+  top: 0;
+  left: 16px;
+  right: 16px;
+  height: 1px;
+  background: linear-gradient(90deg, transparent, var(--accent), transparent);
+}
+.nav-badge {
+  animation: subtlePulse 3s ease-in-out infinite;
+}
+
+/* Card-Icon Glow */
+.card-icon {
+  display: inline-block;
+  transition: transform 0.3s ease;
+}
+.card:hover .card-icon {
+  transform: scale(1.15) rotate(-3deg);
+}
+
+/* Result Box Glow */
+.result-box.visible {
+  position: relative;
+}
+.result-box.visible::before {
+  content: '';
+  position: absolute;
+  inset: -1px;
+  border-radius: var(--radius);
+  background: linear-gradient(135deg, var(--accent), transparent, var(--accent));
+  z-index: -1;
+  opacity: 0.3;
+}
+
+/* Notfall-Steps Enhanced */
+.notfall-step {
+  transition: all 0.3s ease;
+}
+.notfall-step:hover {
+  transform: translateX(4px);
+}
+
+/* Enhanced Scrollbar */
+::-webkit-scrollbar-thumb {
+  background: linear-gradient(180deg, var(--border), var(--text-muted));
+}
+
+/* Tag Glow Effect */
+.tag-danger { box-shadow: 0 0 8px rgba(248,113,113,0.2); }
+.tag-warning { box-shadow: 0 0 8px rgba(251,191,36,0.2); }
+.tag-normal { box-shadow: 0 0 8px rgba(74,222,128,0.2); }
+</style>
+</head>
+<body>
+<!-- LICENSE ACTIVATION SCREEN -->
+<div class="_ls5s1" id="_lSbark">
+<div class="_lbniq">
+<div class="_llk44">&#9764;&#65039;</div>
+<div class="_lt5wf">MedToolbox</div>
+<div class="_lsb7oy">Bitte geben Sie Ihren Lizenzschl&uuml;ssel ein,<br>um die App zu aktivieren.</div>
+<input class="_likzh" id="_lIerjn" type="text" placeholder="MT-XXXX-XXXX-XXXX" maxlength="18" autocomplete="off" spellcheck="false">
+<button class="_lbtme9" onclick="_0x2e78ef()">Aktivieren</button>
+<div class="_le4hg" id="_lE8xx6"></div>
+<div class="_lfe3b">GZ-AI.-STACKS &middot; MEDTOOLBOX</div>
+</div>
+</div>
+<script>
+var _0x400c55='mt-license';
+function _0xca4564(s){var h=0x7A39E1B;for(var i=0;i<s.length;i++){h=((h<<5)-h+s.charCodeAt(i))|0;h=(h^(h>>>16))|0;h=(h*0x45d9f3b)|0;}return Math.abs(h);}
+function _0x4a0f93(p){var p1=_0xca4564(p[0]+'gz');var p2=_0xca4564(p[1]+'ai');var c=(p1^p2^0x4D5444)>>>0;var k=(c%89990)+10000;return k.toString().substring(0,4);}
+function _0xa644a4(key){if(!key)return false;var k=key.toUpperCase().trim();var m=k.match(/^MT-([A-Z0-9]{4})-([A-Z0-9]{4})-([A-Z0-9]{4})$/);if(!m)return false;return m[3]===_0x4a0f93([m[1],m[2]]);}
+function _0x2e78ef(){var input=document.getElementById('_lIerjn');var error=document.getElementById('_lE8xx6');var key=input.value.trim().toUpperCase();if(!key){error.textContent='Bitte Lizenzschl\u00FCssel eingeben';return;}if(_0xa644a4(key)){try{localStorage.setItem(_0x400c55,key);}catch(e){}document.getElementById('_lSbark').classList.add('hidden');error.textContent='';}else{error.textContent='Ung\u00FCltiger Lizenzschl\u00FCssel';input.style.borderColor='#e74c3c';setTimeout(function(){input.style.borderColor='';},2000);}}
+try{var _0x2dacc7=localStorage.getItem(_0x400c55);if(_0x2dacc7&&_0xa644a4(_0x2dacc7)){document.getElementById('_lSbark').classList.add('hidden');}}catch(e){}
+document.getElementById('_lIerjn').addEventListener('input',function(){var v=this.value.replace(/[^A-Za-z0-9]/g,'').toUpperCase();if(v.length>2&&!v.startsWith('MT'))v='MT'+v.substring(2);var f='';if(v.length>0)f=v.substring(0,2);if(v.length>2)f+='-'+v.substring(2,6);if(v.length>6)f+='-'+v.substring(6,10);if(v.length>10)f+='-'+v.substring(10,14);this.value=f;});
+document.getElementById('_lIerjn').addEventListener('keydown',function(e){if(e.key==='Enter')_0x2e78ef();});
+</script>
+
+
+<!-- Mobile Header -->
+<div class="mobile-header">
+  <button class="menu-toggle" onclick="toggleSidebar()">&#9776;</button>
+  <span style="font-weight:700;">MedToolbox</span>
+  <div style="margin-left:auto;display:flex;gap:4px;">
+    <button class="ctrl-btn" onclick="zoomChange(-0.1)" style="padding:4px 8px;">&#8722;</button>
+    <button class="ctrl-btn" onclick="zoomChange(0.1)" style="padding:4px 8px;">&#43;</button>
+    <button class="ctrl-btn" onclick="toggleMode()" style="padding:4px 8px;">&#9790;</button>
+  </div>
+</div>
+<div class="sidebar-overlay" id="sidebarOverlay" onclick="toggleSidebar()"></div>
+
+<!-- Sidebar -->
+<aside class="sidebar" id="sidebar">
+  <div class="sidebar-header">
+    <div class="sidebar-logo">
+      <svg width="36" height="36" viewBox="0 0 52 52" fill="none">
+        <defs><radialgradient id="cg" cx="50%" cy="50%" r="50%"><stop offset="0%" stop-color="#00ff88" stop-opacity=".15"/><stop offset="100%" stop-color="#00ff88" stop-opacity="0"/></radialgradient><lineargradient id="cs2" x1="0" y1="0" x2="1" y2="1"><stop offset="0%" stop-color="#00ff88"/><stop offset="100%" stop-color="#00b4d8"/></lineargradient></defs>
+        <g transform="translate(26,26)">
+          <circle r="22" fill="url(#cg)"/>
+          <line x1="-15" y1="-13" x2="-7" y2="-5" stroke="#00ff88" stroke-width=".6" opacity=".35"/><line x1="15" y1="-13" x2="7" y2="-5" stroke="#00d4ff" stroke-width=".6" opacity=".35"/>
+          <line x1="-15" y1="13" x2="-7" y2="5" stroke="#00d4ff" stroke-width=".6" opacity=".25"/><line x1="15" y1="13" x2="7" y2="5" stroke="#00ff88" stroke-width=".6" opacity=".25"/>
+          <circle cx="-15" cy="-13" r="2" fill="#00ff88" opacity=".5"/><circle cx="15" cy="-13" r="2" fill="#00d4ff" opacity=".5"/>
+          <circle cx="-15" cy="13" r="1.6" fill="#00d4ff" opacity=".32"/><circle cx="15" cy="13" r="1.6" fill="#00ff88" opacity=".32"/>
+          <rect x="-10" y="-8" width="20" height="16" rx="5" fill="rgba(0,229,160,.1)" stroke="url(#cs2)" stroke-width="1.2"/>
+          <text x="0" y="0" text-anchor="middle" dominant-baseline="central" font-size="11" font-weight="900" fill="#fff" letter-spacing="1.8">AI</text>
+        </g>
+      </svg>
+    </div>
+    <div>
+      <div class="sidebar-title">MedToolbox</div>
+      <div class="sidebar-subtitle">GZ AI Stacks</div>
+    </div>
+  </div>
+
+  <nav class="sidebar-nav">
+    <div class="nav-section">
+      <div class="nav-section-title">Allgemein</div>
+      <div class="nav-item active" onclick="navigate('dashboard')">
+        <span class="nav-icon">&#127968;</span> Dashboard
+      </div>
+      <div class="nav-item" onclick="navigate('anleitung')">
+        <span class="nav-icon">&#128214;</span> Anleitung
+      </div>
+    </div>
+
+    <div class="nav-section">
+      <div class="nav-section-title">Werkzeuge</div>
+      <div class="nav-item" onclick="navigate('rechner')">
+        <span class="nav-icon">&#129518;</span> Rechner
+        <span class="nav-badge">9</span>
+      </div>
+      <div class="nav-item" onclick="navigate('labor')">
+        <span class="nav-icon">&#128300;</span> Laborwerte
+      </div>
+      <div class="nav-item" onclick="navigate('notfall')">
+        <span class="nav-icon">&#128680;</span> Notfall
+      </div>
+    </div>
+
+    <div class="nav-section">
+      <div class="nav-section-title">Nachschlagen</div>
+      <div class="nav-item" onclick="navigate('medikamente')">
+        <span class="nav-icon">&#128138;</span> Medikamente
+      </div>
+      <div class="nav-item" onclick="navigate('differentialdiagnosen')">
+        <span class="nav-icon">&#129658;</span> Differentialdiagnosen
+      </div>
+      <div class="nav-item" onclick="navigate('icd10')">
+        <span class="nav-icon">&#128195;</span> ICD-10 Codes
+      </div>
+    </div>
+
+    <div class="nav-section">
+      <div class="nav-section-title">Lernen</div>
+      <div class="nav-item" onclick="navigate('lernkarten')">
+        <span class="nav-icon">&#127183;</span> Lernkarten
+      </div>
+      <div class="nav-item" onclick="navigate('notizen')">
+        <span class="nav-icon">&#128221;</span> Notizen
+      </div>
+    </div>
+  </nav>
+
+  <div class="sidebar-footer">
+    <!-- Theme Selector -->
+    <div style="margin-bottom:10px;">
+      <div style="font-size:0.65rem;text-transform:uppercase;letter-spacing:1px;margin-bottom:6px;color:var(--text-muted);">Theme</div>
+      <div style="display:grid;grid-template-columns:1fr 1fr;gap:4px;">
+        <button class="theme-btn active" data-theme-id="nachtschicht" onclick="setTheme('nachtschicht')" title="Nachtschicht">
+          <span style="background:#38bdf8;width:10px;height:10px;border-radius:50%;display:inline-block;"></span> Nacht
+        </button>
+        <button class="theme-btn" data-theme-id="op-saal" onclick="setTheme('op-saal')" title="OP-Saal">
+          <span style="background:#2dd4bf;width:10px;height:10px;border-radius:50%;display:inline-block;"></span> OP-Saal
+        </button>
+        <button class="theme-btn" data-theme-id="kardiologie" onclick="setTheme('kardiologie')" title="Kardiologie">
+          <span style="background:#fb7185;width:10px;height:10px;border-radius:50%;display:inline-block;"></span> Kardio
+        </button>
+        <button class="theme-btn" data-theme-id="radiologie" onclick="setTheme('radiologie')" title="Radiologie">
+          <span style="background:#a78bfa;width:10px;height:10px;border-radius:50%;display:inline-block;"></span> Radio
+        </button>
+      </div>
+    </div>
+    <!-- Mode & Zoom -->
+    <div style="display:flex;gap:6px;align-items:center;justify-content:center;">
+      <button class="ctrl-btn" onclick="toggleMode()" id="modeToggle" title="Hell/Dunkel umschalten">&#9790; Dunkel</button>
+      <div style="display:flex;align-items:center;gap:2px;">
+        <button class="ctrl-btn" onclick="zoomChange(-0.1)" title="Verkleinern">&#8722;</button>
+        <span id="zoomLevel" style="font-size:0.7rem;min-width:36px;text-align:center;color:var(--text-muted);">100%</span>
+        <button class="ctrl-btn" onclick="zoomChange(0.1)" title="Vergrößern">&#43;</button>
+      </div>
+    </div>
+    <div style="margin-top:8px;font-size:0.65rem;color:var(--text-muted);">MedToolbox v1.0 &middot; GZ AI Stacks</div>
+  </div>
+</aside>
+
+<!-- Main Content -->
+<main class="main" id="mainContent">
+
+  <!-- ==================== DASHBOARD ==================== -->
+  <div class="page active" id="page-dashboard">
+    <div class="page-header">
+      <div class="page-title">Dashboard</div>
+      <div class="page-desc" style="font-size:1rem;max-width:480px;">Dein medizinisches Offline-Werkzeug &mdash; Rechner, Laborwerte, Notfallalgorithmen und mehr. Immer griffbereit.</div>
+    </div>
+
+    <div class="dashboard-hero">
+      <div class="stat-card">
+        <div class="stat-label" style="font-size:0.75rem;text-transform:uppercase;letter-spacing:1.5px;margin-bottom:8px;">Vollständig Offline</div>
+        <div class="stat-value">100%</div>
+        <div class="stat-label" style="margin-top:8px;line-height:1.5;">Kein Internet nötig. Alle 9 Module jederzeit verfügbar &mdash; im Dienst, im OP, unterwegs.</div>
+      </div>
+      <div class="stat-card">
+        <div class="stat-value">9</div>
+        <div class="stat-label">Medizinische Rechner</div>
+      </div>
+      <div class="stat-card">
+        <div class="stat-value" id="notesCount">0</div>
+        <div class="stat-label">Gespeicherte Notizen</div>
+      </div>
+    </div>
+
+    <div style="margin-bottom:16px;font-family:'Space Grotesk','Inter',sans-serif;font-weight:600;font-size:1.1rem;letter-spacing:-0.01em;">Schnellzugriff</div>
+    <div class="card-grid">
+      <div class="card" onclick="navigate('rechner')">
+        <div class="card-icon">&#129518;</div>
+        <div class="card-title">Medizinische Rechner</div>
+        <div class="card-desc">BMI, GFR, korrigiertes Calcium, Wells-Score, CHA2DS2-VASc und mehr</div>
+        <div class="card-badge">9 Rechner</div>
+      </div>
+      <div class="card" onclick="navigate('labor')">
+        <div class="card-icon">&#128300;</div>
+        <div class="card-title">Laborwerte</div>
+        <div class="card-desc">Referenzbereiche mit Interpretation für häufige Laborparameter</div>
+        <div class="card-badge">Verfügbar</div>
+      </div>
+      <div class="card" onclick="navigate('notfall')">
+        <div class="card-icon">&#128680;</div>
+        <div class="card-title">Notfall-Algorithmen</div>
+        <div class="card-desc">ACLS, Anaphylaxie, Schlaganfall und weitere Notfallprotokolle</div>
+        <div class="card-badge">Verfügbar</div>
+      </div>
+      <div class="card" onclick="navigate('medikamente')">
+        <div class="card-icon">&#128138;</div>
+        <div class="card-title">Medikamente</div>
+        <div class="card-desc">Wirkstoffe, Dosierungen, Wechselwirkungen und Kontraindikationen</div>
+        <div class="card-badge">Verfügbar</div>
+      </div>
+      <div class="card" onclick="navigate('differentialdiagnosen')">
+        <div class="card-icon">&#129658;</div>
+        <div class="card-title">Differentialdiagnosen</div>
+        <div class="card-desc">Symptom-basierte Suche nach möglichen Differentialdiagnosen</div>
+        <div class="card-badge">Verfügbar</div>
+      </div>
+      <div class="card" onclick="navigate('icd10')">
+        <div class="card-icon">&#128195;</div>
+        <div class="card-title">ICD-10 Codes</div>
+        <div class="card-desc">Durchsuchbarer Katalog für Diagnose-Kodierung</div>
+        <div class="card-badge">Verfügbar</div>
+      </div>
+      <div class="card" onclick="navigate('lernkarten')">
+        <div class="card-icon">&#127183;</div>
+        <div class="card-title">Lernkarten</div>
+        <div class="card-desc">Flashcards mit Spaced Repetition für Anatomie und Pharmakologie</div>
+        <div class="card-badge">Verfügbar</div>
+      </div>
+      <div class="card" onclick="navigate('notizen')">
+        <div class="card-icon">&#128221;</div>
+        <div class="card-title">Notizen</div>
+        <div class="card-desc">Lokales Klinik-Tagebuch mit verschlüsselter Speicherung</div>
+        <div class="card-badge">Verfügbar</div>
+      </div>
+    </div>
+  </div>
+
+  <!-- ==================== ANLEITUNG ==================== -->
+  <div class="page" id="page-anleitung">
+    <div class="page-header">
+      <div class="page-title">Anleitung</div>
+      <div class="page-desc">Was ist MedToolbox und wie benutzt man sie?</div>
+    </div>
+
+    <!-- Was ist MedToolbox -->
+    <div style="background:var(--bg-card);border:1px solid var(--border);border-radius:var(--radius);padding:24px;margin-bottom:20px;">
+      <div style="display:flex;align-items:center;gap:12px;margin-bottom:16px;">
+        <svg width="36" height="36" viewBox="0 0 52 52" fill="none">
+          <g transform="translate(26,26)">
+            <circle r="22" fill="rgba(0,255,136,0.08)"/>
+            <rect x="-10" y="-8" width="20" height="16" rx="5" fill="rgba(0,229,160,.1)" stroke="url(#cs2)" stroke-width="1.2"/>
+            <text x="0" y="0" text-anchor="middle" dominant-baseline="central" font-size="11" font-weight="900" fill="#fff" letter-spacing="1.8">AI</text>
+          </g>
+        </svg>
+        <div>
+          <div style="font-size:1.2rem;font-weight:700;">Was ist MedToolbox?</div>
+          <div style="font-size:0.85rem;color:var(--text-secondary);">Entwickelt von GZ AI Stacks</div>
+        </div>
+      </div>
+      <div style="font-size:0.95rem;color:var(--text-secondary);line-height:1.8;">
+        MedToolbox ist eine <strong style="color:var(--text-primary);">kostenlose, offline-fähige medizinische Referenz-App</strong>, die komplett im Browser läuft — ohne Installation, ohne Internet, ohne Registrierung.
+        <br><br>
+        Die App richtet sich an <strong style="color:var(--text-primary);">Medizinstudierende, Pflegekräfte, Ärzte und alle Gesundheitsberufe</strong>, die schnellen Zugriff auf klinische Werkzeuge, Referenzwerte und Nachschlagewerke benötigen.
+        <br><br>
+        <strong style="color:var(--accent);">Wichtiger Hinweis:</strong> MedToolbox dient ausschließlich als Lern- und Nachschlagehilfe. Sie ersetzt keine ärztliche Beratung oder klinische Leitlinien. Alle Angaben ohne Gewähr.
+      </div>
+    </div>
+
+    <!-- Kernfunktionen -->
+    <div style="font-size:1.1rem;font-weight:700;margin-bottom:16px;">Die 9 Module im Überblick</div>
+
+    <div style="display:grid;gap:12px;margin-bottom:28px;">
+      <!-- Dashboard -->
+      <div style="background:var(--bg-card);border:1px solid var(--border);border-radius:var(--radius);padding:18px;display:flex;gap:16px;align-items:start;">
+        <div style="font-size:1.5rem;min-width:36px;text-align:center;">&#127968;</div>
+        <div>
+          <div style="font-weight:600;margin-bottom:4px;">Dashboard</div>
+          <div style="font-size:0.85rem;color:var(--text-secondary);line-height:1.6;">
+            Die Startseite bietet einen Überblick über alle Module mit Schnellzugriff-Kacheln. Hier siehst du auch Statistiken wie die Anzahl deiner gespeicherten Notizen.
+          </div>
+        </div>
+      </div>
+
+      <!-- Rechner -->
+      <div style="background:var(--bg-card);border:1px solid var(--border);border-radius:var(--radius);padding:18px;display:flex;gap:16px;align-items:start;">
+        <div style="font-size:1.5rem;min-width:36px;text-align:center;">&#129518;</div>
+        <div>
+          <div style="font-weight:600;margin-bottom:4px;">Medizinische Rechner (9 Stück)</div>
+          <div style="font-size:0.85rem;color:var(--text-secondary);line-height:1.6;">
+            <strong style="color:var(--text-primary);">So geht's:</strong> Wähle links einen Rechner aus der Liste, gib die Werte ein und klicke auf „Berechnen". Das Ergebnis erscheint farbcodiert (grün = normal, gelb = Achtung, rot = kritisch).
+            <br><br>
+            <strong style="color:var(--text-primary);">Verfügbare Rechner:</strong>
+            BMI, GFR (CKD-EPI 2021), Korrigiertes Calcium, Wells-Score (TVT), CHA₂DS₂-VASc, HAS-BLED, Child-Pugh, Infusionsrate, Korrigiertes Natrium.
+          </div>
+        </div>
+      </div>
+
+      <!-- Laborwerte -->
+      <div style="background:var(--bg-card);border:1px solid var(--border);border-radius:var(--radius);padding:18px;display:flex;gap:16px;align-items:start;">
+        <div style="font-size:1.5rem;min-width:36px;text-align:center;">&#128300;</div>
+        <div>
+          <div style="font-weight:600;margin-bottom:4px;">Laborwerte</div>
+          <div style="font-size:0.85rem;color:var(--text-secondary);line-height:1.6;">
+            <strong style="color:var(--text-primary);">So geht's:</strong> Durchsuche über 60 Laborparameter mit der Suchleiste. Jeder Parameter zeigt Referenzbereiche für Männer und Frauen sowie klinische Hinweise.
+            <br><br>
+            <strong style="color:var(--text-primary);">Kategorien:</strong>
+            Blutbild, Gerinnung, Elektrolyte, Leber, Niere, Stoffwechsel, Entzündung, Schilddrüse, Herz.
+          </div>
+        </div>
+      </div>
+
+      <!-- Notfall -->
+      <div style="background:var(--bg-card);border:1px solid var(--border);border-radius:var(--radius);padding:18px;display:flex;gap:16px;align-items:start;">
+        <div style="font-size:1.5rem;min-width:36px;text-align:center;">&#128680;</div>
+        <div>
+          <div style="font-weight:600;margin-bottom:4px;">Notfall-Algorithmen</div>
+          <div style="font-size:0.85rem;color:var(--text-secondary);line-height:1.6;">
+            <strong style="color:var(--text-primary);">So geht's:</strong> Wähle eine Notfallsituation aus den Kacheln. Jeder Algorithmus zeigt nummerierte Schritte mit farbcodierten Prioritäten (rot = sofort handeln, gelb = wichtig, blau = weiteres Vorgehen).
+            <br><br>
+            <strong style="color:var(--text-primary);">Verfügbar:</strong>
+            Reanimation (ALS), Anaphylaxie, Akutes Koronarsyndrom, Schlaganfall, Hyperkaliämie, Sepsis.
+          </div>
+        </div>
+      </div>
+
+      <!-- Medikamente -->
+      <div style="background:var(--bg-card);border:1px solid var(--border);border-radius:var(--radius);padding:18px;display:flex;gap:16px;align-items:start;">
+        <div style="font-size:1.5rem;min-width:36px;text-align:center;">&#128138;</div>
+        <div>
+          <div style="font-weight:600;margin-bottom:4px;">Medikamente</div>
+          <div style="font-size:0.85rem;color:var(--text-secondary);line-height:1.6;">
+            <strong style="color:var(--text-primary);">So geht's:</strong> Suche nach Wirkstoff oder Handelsname in der Suchleiste. Jedes Medikament zeigt Dosierung, Indikation, Kontraindikationen und Nebenwirkungen auf einen Blick.
+            <br><br>
+            <strong style="color:var(--text-primary);">Kategorien:</strong>
+            Notfallmedikamente, Analgetika, Antibiotika, Kardiovaskulär, PPI/GI.
+          </div>
+        </div>
+      </div>
+
+      <!-- Differentialdiagnosen -->
+      <div style="background:var(--bg-card);border:1px solid var(--border);border-radius:var(--radius);padding:18px;display:flex;gap:16px;align-items:start;">
+        <div style="font-size:1.5rem;min-width:36px;text-align:center;">&#129658;</div>
+        <div>
+          <div style="font-weight:600;margin-bottom:4px;">Differentialdiagnosen</div>
+          <div style="font-size:0.85rem;color:var(--text-secondary);line-height:1.6;">
+            <strong style="color:var(--text-primary);">So geht's:</strong> Wähle ein Leitsymptom aus den Kacheln oder suche danach. Für jedes Symptom werden mögliche Differentialdiagnosen aufgelistet — Notfälle sind mit einem roten „Notfall"-Tag markiert, damit du lebensbedrohliche Ursachen sofort erkennst.
+            <br><br>
+            <strong style="color:var(--text-primary);">Leitsymptome:</strong>
+            Brustschmerz, Dyspnoe, Bauchschmerz, Kopfschmerz, Synkope, Fieber unklarer Genese.
+          </div>
+        </div>
+      </div>
+
+      <!-- ICD-10 -->
+      <div style="background:var(--bg-card);border:1px solid var(--border);border-radius:var(--radius);padding:18px;display:flex;gap:16px;align-items:start;">
+        <div style="font-size:1.5rem;min-width:36px;text-align:center;">&#128195;</div>
+        <div>
+          <div style="font-weight:600;margin-bottom:4px;">ICD-10 Codes</div>
+          <div style="font-size:0.85rem;color:var(--text-secondary);line-height:1.6;">
+            <strong style="color:var(--text-primary);">So geht's:</strong> Gib einen ICD-Code (z.B. „I48") oder eine Diagnose (z.B. „Pneumonie") in die Suchleiste ein. Die Ergebnisse werden nach Kapitel sortiert angezeigt.
+            <br><br>
+            Über 100 häufige Codes aus 13 ICD-Kapiteln sind enthalten.
+          </div>
+        </div>
+      </div>
+
+      <!-- Lernkarten -->
+      <div style="background:var(--bg-card);border:1px solid var(--border);border-radius:var(--radius);padding:18px;display:flex;gap:16px;align-items:start;">
+        <div style="font-size:1.5rem;min-width:36px;text-align:center;">&#127183;</div>
+        <div>
+          <div style="font-weight:600;margin-bottom:4px;">Lernkarten (Flashcards)</div>
+          <div style="font-size:0.85rem;color:var(--text-secondary);line-height:1.6;">
+            <strong style="color:var(--text-primary);">So geht's:</strong> Wähle ein Deck (Anatomie, Pharmakologie oder Innere Medizin). Klicke auf die Karte, um die Antwort aufzudecken, und bewerte dich selbst:
+            <br>
+            <span style="color:var(--danger);">Nochmal</span> = Karte kommt sofort wieder &nbsp;|&nbsp;
+            <span style="color:var(--warning);">Schwer</span> = kürzerer Abstand &nbsp;|&nbsp;
+            <span style="color:var(--success);">Gut</span> = normaler Abstand &nbsp;|&nbsp;
+            <span style="color:var(--accent);">Leicht</span> = längerer Abstand
+            <br><br>
+            Das <strong style="color:var(--text-primary);">Spaced-Repetition-System</strong> merkt sich deinen Lernfortschritt im Browser und zeigt fällige Karten automatisch.
+          </div>
+        </div>
+      </div>
+
+      <!-- Notizen -->
+      <div style="background:var(--bg-card);border:1px solid var(--border);border-radius:var(--radius);padding:18px;display:flex;gap:16px;align-items:start;">
+        <div style="font-size:1.5rem;min-width:36px;text-align:center;">&#128221;</div>
+        <div>
+          <div style="font-weight:600;margin-bottom:4px;">Notizen</div>
+          <div style="font-size:0.85rem;color:var(--text-secondary);line-height:1.6;">
+            <strong style="color:var(--text-primary);">So geht's:</strong> Klicke auf „+ Neue Notiz", gib Titel, Kategorie und Inhalt ein und speichere. Notizen werden lokal im Browser gespeichert.
+            <br><br>
+            <strong style="color:var(--text-primary);">Kategorien:</strong> Allgemein, Patient, Übergabe, Lernnotiz, To-Do.
+            <br><br>
+            <strong style="color:var(--text-primary);">Export-Optionen:</strong>
+            <br>&#128190; <strong>Speichern unter</strong> — JSON-Datei (kann wieder importiert werden)
+            <br>&#128196; <strong>Als Text</strong> — Lesbare Textdatei
+            <br>&#128462; <strong>Als PDF</strong> — Druckbare PDF-Version
+            <br>&#128194; <strong>Importieren</strong> — JSON-Backup wiederherstellen
+          </div>
+        </div>
+      </div>
+    </div>
+
+    <!-- Einstellungen -->
+    <div style="font-size:1.1rem;font-weight:700;margin-bottom:16px;">Einstellungen &amp; Bedienung</div>
+
+    <div style="display:grid;grid-template-columns:repeat(auto-fill,minmax(280px,1fr));gap:12px;margin-bottom:28px;">
+      <div style="background:var(--bg-card);border:1px solid var(--border);border-radius:var(--radius);padding:18px;">
+        <div style="font-weight:600;margin-bottom:8px;">&#127912; Themes</div>
+        <div style="font-size:0.85rem;color:var(--text-secondary);line-height:1.6;">
+          Unten in der Sidebar findest du 4 Farbthemen:
+          <br><span style="color:#38bdf8;">&#9679;</span> <strong>Nachtschicht</strong> — Blau, ideal für den Nachtdienst
+          <br><span style="color:#2dd4bf;">&#9679;</span> <strong>OP-Saal</strong> — Türkis/Grün, chirurgisch
+          <br><span style="color:#fb7185;">&#9679;</span> <strong>Kardiologie</strong> — Rot/Rosa, Herztöne
+          <br><span style="color:#a78bfa;">&#9679;</span> <strong>Radiologie</strong> — Violett, Bildgebung
+        </div>
+      </div>
+      <div style="background:var(--bg-card);border:1px solid var(--border);border-radius:var(--radius);padding:18px;">
+        <div style="font-weight:600;margin-bottom:8px;">&#9728; Hell / Dunkel</div>
+        <div style="font-size:0.85rem;color:var(--text-secondary);line-height:1.6;">
+          Jedes Theme hat einen hellen und einen dunklen Modus. Wechsle mit dem Button „&#9790; Dunkel" / „&#9728; Hell" unten in der Sidebar. Auf Mobilgeräten findest du den Schalter oben rechts.
+        </div>
+      </div>
+      <div style="background:var(--bg-card);border:1px solid var(--border);border-radius:var(--radius);padding:18px;">
+        <div style="font-weight:600;margin-bottom:8px;">&#128269; Zoom</div>
+        <div style="font-size:0.85rem;color:var(--text-secondary);line-height:1.6;">
+          Mit den <strong>+ / −</strong> Buttons kannst du die gesamte App vergrößern oder verkleinern (60% bis 160%). Die Einstellung wird gespeichert und beim nächsten Öffnen beibehalten.
+        </div>
+      </div>
+      <div style="background:var(--bg-card);border:1px solid var(--border);border-radius:var(--radius);padding:18px;">
+        <div style="font-weight:600;margin-bottom:8px;">&#128241; Mobil &amp; Offline</div>
+        <div style="font-size:0.85rem;color:var(--text-secondary);line-height:1.6;">
+          MedToolbox ist vollständig responsiv und funktioniert auf Smartphone, Tablet und Desktop. Auf Mobilgeräten öffnet das &#9776;-Menü die Sidebar. Die App benötigt <strong>kein Internet</strong> — einfach die HTML-Datei im Browser öffnen.
+        </div>
+      </div>
+    </div>
+
+    <!-- Datenspeicherung -->
+    <div style="background:var(--bg-card);border:1px solid var(--border);border-left:4px solid var(--accent);border-radius:var(--radius);padding:18px;margin-bottom:20px;">
+      <div style="font-weight:600;margin-bottom:8px;">&#128274; Datenspeicherung</div>
+      <div style="font-size:0.85rem;color:var(--text-secondary);line-height:1.6;">
+        Alle persönlichen Daten (Notizen, Lernfortschritt, Einstellungen) werden ausschließlich <strong style="color:var(--text-primary);">lokal im Browser (localStorage)</strong> gespeichert. Es werden keine Daten an Server gesendet. Wenn du den Browser-Cache löschst, gehen diese Daten verloren — nutze daher regelmäßig die Export-Funktion bei den Notizen als Backup.
+      </div>
+    </div>
+
+    <!-- Tastenkürzel -->
+    <div style="background:var(--bg-card);border:1px solid var(--border);border-radius:var(--radius);padding:18px;margin-bottom:20px;">
+      <div style="font-weight:600;margin-bottom:8px;">&#9000; Tipps &amp; Tricks</div>
+      <div style="font-size:0.85rem;color:var(--text-secondary);line-height:1.6;">
+        &#8226; Nutze die <strong style="color:var(--text-primary);">Suchleisten</strong> in jedem Modul, um schnell zu finden, was du brauchst.
+        <br>&#8226; Die Lernkarten-Decks zeigen an, wie viele Karten <strong style="color:var(--text-primary);">fällig</strong> sind — lerne täglich für besten Effekt.
+        <br>&#8226; Im Rechner-Modul kannst du mit „Zurücksetzen" alle Felder schnell leeren.
+        <br>&#8226; Bei den Differentialdiagnosen sind <span class="result-tag tag-danger" style="font-size:0.7rem;">Notfall</span>-Diagnosen rot markiert — diese zuerst ausschließen!
+        <br>&#8226; Speichere die HTML-Datei auf deinem Handy und erstelle eine Verknüpfung auf dem Homescreen für App-ähnlichen Zugriff.
+      </div>
+    </div>
+
+    <div style="text-align:center;padding:20px;color:var(--text-muted);font-size:0.8rem;">
+      MedToolbox v1.0 &middot; Entwickelt von GZ AI Stacks &middot; Alle Angaben ohne Gewähr
+    </div>
+  </div>
+
+  <!-- ==================== RECHNER ==================== -->
+  <div class="page" id="page-rechner">
+    <div class="page-header">
+      <div class="page-title">Medizinische Rechner</div>
+      <div class="page-desc">Klinische Scores und Berechnungen</div>
+    </div>
+
+    <div class="calc-container">
+      <div class="calc-list">
+        <div class="calc-list-header">Rechner auswählen</div>
+        <div class="calc-item active" onclick="showCalc('bmi')">&#9878; BMI</div>
+        <div class="calc-item" onclick="showCalc('gfr')">&#9878; GFR (CKD-EPI)</div>
+        <div class="calc-item" onclick="showCalc('calcium')">&#9878; Korr. Calcium</div>
+        <div class="calc-item" onclick="showCalc('wells')">&#9878; Wells-Score (TVT)</div>
+        <div class="calc-item" onclick="showCalc('chadsvasc')">&#9878; CHA2DS2-VASc</div>
+        <div class="calc-item" onclick="showCalc('hasbled')">&#9878; HAS-BLED</div>
+        <div class="calc-item" onclick="showCalc('childpugh')">&#9878; Child-Pugh</div>
+        <div class="calc-item" onclick="showCalc('infusion')">&#9878; Infusionsrate</div>
+        <div class="calc-item" onclick="showCalc('nakorr')">&#9878; Korr. Natrium</div>
+      </div>
+
+      <div class="calc-panel" id="calcPanel">
+        <!-- BMI Default -->
+        <div id="calc-bmi">
+          <div class="calc-title">Body-Mass-Index (BMI)</div>
+          <div class="calc-subtitle">Berechnung des BMI aus Körpergewicht und Körpergröße</div>
+          <div class="form-row">
+            <div class="form-group">
+              <label class="form-label">Gewicht</label>
+              <input type="number" class="form-input" id="bmi-weight" placeholder="z.B. 75" step="0.1">
+            </div>
+            <div class="form-unit">kg</div>
+            <div class="form-group">
+              <label class="form-label">Größe</label>
+              <input type="number" class="form-input" id="bmi-height" placeholder="z.B. 175" step="1">
+            </div>
+            <div class="form-unit">cm</div>
+          </div>
+          <div class="btn-group">
+            <button class="btn btn-primary" onclick="calcBMI()">Berechnen</button>
+            <button class="btn btn-secondary" onclick="clearCalc('bmi')">Zurücksetzen</button>
+          </div>
+          <div class="result-box" id="result-bmi">
+            <div class="result-label">BMI</div>
+            <div class="result-value" id="bmi-result-val"></div>
+            <div class="result-interpretation" id="bmi-result-text"></div>
+          </div>
+        </div>
+
+        <!-- GFR -->
+        <div id="calc-gfr" style="display:none">
+          <div class="calc-title">GFR (CKD-EPI 2021)</div>
+          <div class="calc-subtitle">Geschätzte glomeruläre Filtrationsrate nach CKD-EPI Formel</div>
+          <div class="form-group">
+            <label class="form-label">Kreatinin (mg/dL)</label>
+            <input type="number" class="form-input" id="gfr-creat" placeholder="z.B. 1.1" step="0.01">
+          </div>
+          <div class="form-row">
+            <div class="form-group">
+              <label class="form-label">Alter (Jahre)</label>
+              <input type="number" class="form-input" id="gfr-age" placeholder="z.B. 55">
+            </div>
+            <div class="form-group">
+              <label class="form-label">Geschlecht</label>
+              <select class="form-select" id="gfr-sex">
+                <option value="m">Männlich</option>
+                <option value="f">Weiblich</option>
+              </select>
+            </div>
+          </div>
+          <div class="btn-group">
+            <button class="btn btn-primary" onclick="calcGFR()">Berechnen</button>
+            <button class="btn btn-secondary" onclick="clearCalc('gfr')">Zurücksetzen</button>
+          </div>
+          <div class="result-box" id="result-gfr">
+            <div class="result-label">eGFR</div>
+            <div class="result-value" id="gfr-result-val"></div>
+            <div class="result-interpretation" id="gfr-result-text"></div>
+          </div>
+        </div>
+
+        <!-- Korrigiertes Calcium -->
+        <div id="calc-calcium" style="display:none">
+          <div class="calc-title">Korrigiertes Calcium</div>
+          <div class="calc-subtitle">Calcium-Korrektur bei Hypoalbuminämie</div>
+          <div class="form-row">
+            <div class="form-group">
+              <label class="form-label">Gesamt-Calcium (mg/dL)</label>
+              <input type="number" class="form-input" id="ca-total" placeholder="z.B. 8.5" step="0.1">
+            </div>
+            <div class="form-group">
+              <label class="form-label">Albumin (g/dL)</label>
+              <input type="number" class="form-input" id="ca-albumin" placeholder="z.B. 3.0" step="0.1">
+            </div>
+          </div>
+          <div class="btn-group">
+            <button class="btn btn-primary" onclick="calcCalcium()">Berechnen</button>
+            <button class="btn btn-secondary" onclick="clearCalc('calcium')">Zurücksetzen</button>
+          </div>
+          <div class="result-box" id="result-calcium">
+            <div class="result-label">Korrigiertes Calcium</div>
+            <div class="result-value" id="ca-result-val"></div>
+            <div class="result-interpretation" id="ca-result-text"></div>
+          </div>
+        </div>
+
+        <!-- Wells Score TVT -->
+        <div id="calc-wells" style="display:none">
+          <div class="calc-title">Wells-Score (TVT)</div>
+          <div class="calc-subtitle">Klinische Wahrscheinlichkeit einer tiefen Venenthrombose</div>
+          <div id="wells-checks" style="display:flex;flex-direction:column;gap:10px;">
+            <label style="display:flex;align-items:center;gap:10px;cursor:pointer;">
+              <input type="checkbox" class="wells-cb" value="1"> Aktive Tumorerkrankung (+1)
+            </label>
+            <label style="display:flex;align-items:center;gap:10px;cursor:pointer;">
+              <input type="checkbox" class="wells-cb" value="1"> Lähmung / Immobilisation der Beine (+1)
+            </label>
+            <label style="display:flex;align-items:center;gap:10px;cursor:pointer;">
+              <input type="checkbox" class="wells-cb" value="1"> Bettruhe >3 Tage / OP <12 Wochen (+1)
+            </label>
+            <label style="display:flex;align-items:center;gap:10px;cursor:pointer;">
+              <input type="checkbox" class="wells-cb" value="1"> Schmerz/Druckempfindlichkeit tiefer Venen (+1)
+            </label>
+            <label style="display:flex;align-items:center;gap:10px;cursor:pointer;">
+              <input type="checkbox" class="wells-cb" value="1"> Schwellung des gesamten Beins (+1)
+            </label>
+            <label style="display:flex;align-items:center;gap:10px;cursor:pointer;">
+              <input type="checkbox" class="wells-cb" value="1"> Wadenumfang >3cm Differenz (+1)
+            </label>
+            <label style="display:flex;align-items:center;gap:10px;cursor:pointer;">
+              <input type="checkbox" class="wells-cb" value="1"> Eingedrücktes Ödem (+1)
+            </label>
+            <label style="display:flex;align-items:center;gap:10px;cursor:pointer;">
+              <input type="checkbox" class="wells-cb" value="1"> Kollaterale oberflächliche Venen (+1)
+            </label>
+            <label style="display:flex;align-items:center;gap:10px;cursor:pointer;">
+              <input type="checkbox" class="wells-cb" value="-2"> Alternative Diagnose wahrscheinlicher (-2)
+            </label>
+          </div>
+          <div class="btn-group" style="margin-top:16px;">
+            <button class="btn btn-primary" onclick="calcWells()">Berechnen</button>
+            <button class="btn btn-secondary" onclick="clearCalc('wells')">Zurücksetzen</button>
+          </div>
+          <div class="result-box" id="result-wells">
+            <div class="result-label">Wells-Score</div>
+            <div class="result-value" id="wells-result-val"></div>
+            <div class="result-interpretation" id="wells-result-text"></div>
+          </div>
+        </div>
+
+        <!-- CHA2DS2-VASc -->
+        <div id="calc-chadsvasc" style="display:none">
+          <div class="calc-title">CHA2DS2-VASc Score</div>
+          <div class="calc-subtitle">Schlaganfallrisiko bei Vorhofflimmern</div>
+          <div id="chads-checks" style="display:flex;flex-direction:column;gap:10px;">
+            <label style="display:flex;align-items:center;gap:10px;cursor:pointer;">
+              <input type="checkbox" class="chads-cb" value="1"> Herzinsuffizienz (+1)
+            </label>
+            <label style="display:flex;align-items:center;gap:10px;cursor:pointer;">
+              <input type="checkbox" class="chads-cb" value="1"> Hypertonie (+1)
+            </label>
+            <label style="display:flex;align-items:center;gap:10px;cursor:pointer;">
+              <input type="checkbox" class="chads-cb" value="2"> Alter >= 75 Jahre (+2)
+            </label>
+            <label style="display:flex;align-items:center;gap:10px;cursor:pointer;">
+              <input type="checkbox" class="chads-cb" value="1"> Diabetes mellitus (+1)
+            </label>
+            <label style="display:flex;align-items:center;gap:10px;cursor:pointer;">
+              <input type="checkbox" class="chads-cb" value="2"> Schlaganfall / TIA / Embolie (+2)
+            </label>
+            <label style="display:flex;align-items:center;gap:10px;cursor:pointer;">
+              <input type="checkbox" class="chads-cb" value="1"> Gefäßerkrankung (+1)
+            </label>
+            <label style="display:flex;align-items:center;gap:10px;cursor:pointer;">
+              <input type="checkbox" class="chads-cb" value="1"> Alter 65-74 Jahre (+1)
+            </label>
+            <label style="display:flex;align-items:center;gap:10px;cursor:pointer;">
+              <input type="checkbox" class="chads-cb" value="1"> Weibliches Geschlecht (+1)
+            </label>
+          </div>
+          <div class="btn-group" style="margin-top:16px;">
+            <button class="btn btn-primary" onclick="calcCHADS()">Berechnen</button>
+            <button class="btn btn-secondary" onclick="clearCalc('chadsvasc')">Zurücksetzen</button>
+          </div>
+          <div class="result-box" id="result-chadsvasc">
+            <div class="result-label">CHA2DS2-VASc Score</div>
+            <div class="result-value" id="chads-result-val"></div>
+            <div class="result-interpretation" id="chads-result-text"></div>
+          </div>
+        </div>
+
+        <!-- HAS-BLED -->
+        <div id="calc-hasbled" style="display:none">
+          <div class="calc-title">HAS-BLED Score</div>
+          <div class="calc-subtitle">Blutungsrisiko unter Antikoagulation</div>
+          <div id="hasbled-checks" style="display:flex;flex-direction:column;gap:10px;">
+            <label style="display:flex;align-items:center;gap:10px;cursor:pointer;">
+              <input type="checkbox" class="hasbled-cb" value="1"> Hypertonie (syst. >160 mmHg) (+1)
+            </label>
+            <label style="display:flex;align-items:center;gap:10px;cursor:pointer;">
+              <input type="checkbox" class="hasbled-cb" value="1"> Abnormale Nierenfunktion (+1)
+            </label>
+            <label style="display:flex;align-items:center;gap:10px;cursor:pointer;">
+              <input type="checkbox" class="hasbled-cb" value="1"> Abnormale Leberfunktion (+1)
+            </label>
+            <label style="display:flex;align-items:center;gap:10px;cursor:pointer;">
+              <input type="checkbox" class="hasbled-cb" value="1"> Schlaganfall (+1)
+            </label>
+            <label style="display:flex;align-items:center;gap:10px;cursor:pointer;">
+              <input type="checkbox" class="hasbled-cb" value="1"> Blutungsanamnese (+1)
+            </label>
+            <label style="display:flex;align-items:center;gap:10px;cursor:pointer;">
+              <input type="checkbox" class="hasbled-cb" value="1"> Labile INR-Werte (+1)
+            </label>
+            <label style="display:flex;align-items:center;gap:10px;cursor:pointer;">
+              <input type="checkbox" class="hasbled-cb" value="1"> Alter >65 Jahre (+1)
+            </label>
+            <label style="display:flex;align-items:center;gap:10px;cursor:pointer;">
+              <input type="checkbox" class="hasbled-cb" value="1"> Medikamente (ASS, NSAR) (+1)
+            </label>
+            <label style="display:flex;align-items:center;gap:10px;cursor:pointer;">
+              <input type="checkbox" class="hasbled-cb" value="1"> Alkoholkonsum (+1)
+            </label>
+          </div>
+          <div class="btn-group" style="margin-top:16px;">
+            <button class="btn btn-primary" onclick="calcHASBLED()">Berechnen</button>
+            <button class="btn btn-secondary" onclick="clearCalc('hasbled')">Zurücksetzen</button>
+          </div>
+          <div class="result-box" id="result-hasbled">
+            <div class="result-label">HAS-BLED Score</div>
+            <div class="result-value" id="hasbled-result-val"></div>
+            <div class="result-interpretation" id="hasbled-result-text"></div>
+          </div>
+        </div>
+
+        <!-- Child-Pugh -->
+        <div id="calc-childpugh" style="display:none">
+          <div class="calc-title">Child-Pugh Score</div>
+          <div class="calc-subtitle">Schweregrad einer Leberzirrhose</div>
+          <div class="form-group">
+            <label class="form-label">Bilirubin (mg/dL)</label>
+            <select class="form-select" id="cp-bili">
+              <option value="1">< 2 (1 Punkt)</option>
+              <option value="2">2 - 3 (2 Punkte)</option>
+              <option value="3">> 3 (3 Punkte)</option>
+            </select>
+          </div>
+          <div class="form-group">
+            <label class="form-label">Albumin (g/dL)</label>
+            <select class="form-select" id="cp-alb">
+              <option value="1">> 3.5 (1 Punkt)</option>
+              <option value="2">2.8 - 3.5 (2 Punkte)</option>
+              <option value="3">< 2.8 (3 Punkte)</option>
+            </select>
+          </div>
+          <div class="form-group">
+            <label class="form-label">INR</label>
+            <select class="form-select" id="cp-inr">
+              <option value="1">< 1.7 (1 Punkt)</option>
+              <option value="2">1.7 - 2.3 (2 Punkte)</option>
+              <option value="3">> 2.3 (3 Punkte)</option>
+            </select>
+          </div>
+          <div class="form-group">
+            <label class="form-label">Aszites</label>
+            <select class="form-select" id="cp-asc">
+              <option value="1">Kein (1 Punkt)</option>
+              <option value="2">Leicht (2 Punkte)</option>
+              <option value="3">Mäßig-schwer (3 Punkte)</option>
+            </select>
+          </div>
+          <div class="form-group">
+            <label class="form-label">Enzephalopathie</label>
+            <select class="form-select" id="cp-enc">
+              <option value="1">Keine (1 Punkt)</option>
+              <option value="2">Grad I-II (2 Punkte)</option>
+              <option value="3">Grad III-IV (3 Punkte)</option>
+            </select>
+          </div>
+          <div class="btn-group">
+            <button class="btn btn-primary" onclick="calcChildPugh()">Berechnen</button>
+            <button class="btn btn-secondary" onclick="clearCalc('childpugh')">Zurücksetzen</button>
+          </div>
+          <div class="result-box" id="result-childpugh">
+            <div class="result-label">Child-Pugh Score</div>
+            <div class="result-value" id="cp-result-val"></div>
+            <div class="result-interpretation" id="cp-result-text"></div>
+          </div>
+        </div>
+
+        <!-- Infusionsrate -->
+        <div id="calc-infusion" style="display:none">
+          <div class="calc-title">Infusionsrate</div>
+          <div class="calc-subtitle">Berechnung der Tropfgeschwindigkeit / ml pro Stunde</div>
+          <div class="form-row">
+            <div class="form-group">
+              <label class="form-label">Gesamtvolumen (mL)</label>
+              <input type="number" class="form-input" id="inf-vol" placeholder="z.B. 500" step="1">
+            </div>
+            <div class="form-group">
+              <label class="form-label">Laufzeit (Stunden)</label>
+              <input type="number" class="form-input" id="inf-time" placeholder="z.B. 4" step="0.5">
+            </div>
+          </div>
+          <div class="form-group">
+            <label class="form-label">Tropfenfaktor</label>
+            <select class="form-select" id="inf-factor">
+              <option value="20">Standard (20 Tropfen/mL)</option>
+              <option value="15">Makro (15 Tropfen/mL)</option>
+              <option value="60">Mikro (60 Tropfen/mL)</option>
+            </select>
+          </div>
+          <div class="btn-group">
+            <button class="btn btn-primary" onclick="calcInfusion()">Berechnen</button>
+            <button class="btn btn-secondary" onclick="clearCalc('infusion')">Zurücksetzen</button>
+          </div>
+          <div class="result-box" id="result-infusion">
+            <div class="result-label">Infusionsrate</div>
+            <div class="result-value" id="inf-result-val"></div>
+            <div class="result-interpretation" id="inf-result-text"></div>
+          </div>
+        </div>
+
+        <!-- Korrigiertes Natrium -->
+        <div id="calc-nakorr" style="display:none">
+          <div class="calc-title">Korrigiertes Natrium</div>
+          <div class="calc-subtitle">Natrium-Korrektur bei Hyperglykämie (Katz-Formel)</div>
+          <div class="form-row">
+            <div class="form-group">
+              <label class="form-label">Gemessenes Natrium (mmol/L)</label>
+              <input type="number" class="form-input" id="na-measured" placeholder="z.B. 130" step="0.1">
+            </div>
+            <div class="form-group">
+              <label class="form-label">Glukose (mg/dL)</label>
+              <input type="number" class="form-input" id="na-glucose" placeholder="z.B. 400" step="1">
+            </div>
+          </div>
+          <div class="btn-group">
+            <button class="btn btn-primary" onclick="calcNaKorr()">Berechnen</button>
+            <button class="btn btn-secondary" onclick="clearCalc('nakorr')">Zurücksetzen</button>
+          </div>
+          <div class="result-box" id="result-nakorr">
+            <div class="result-label">Korrigiertes Natrium</div>
+            <div class="result-value" id="na-result-val"></div>
+            <div class="result-interpretation" id="na-result-text"></div>
+          </div>
+        </div>
+
+      </div>
+    </div>
+  </div>
+
+  <!-- ==================== PLACEHOLDER PAGES ==================== -->
+  <div class="page" id="page-labor">
+    <div class="page-header">
+      <div class="page-title">Laborwerte</div>
+      <div class="page-desc">Referenzbereiche und Interpretation</div>
+    </div>
+    <div class="search-box">
+      <span class="search-icon">&#128269;</span>
+      <input type="text" class="form-input" id="labor-search" placeholder="Laborwert suchen..." oninput="filterLabor()">
+    </div>
+    <div id="labor-content"></div>
+  </div>
+
+  <div class="page" id="page-notfall">
+    <div class="page-header">
+      <div class="page-title">Notfall-Algorithmen</div>
+      <div class="page-desc">Interaktive Protokolle für Notfallsituationen</div>
+    </div>
+    <div class="card-grid" id="notfall-list"></div>
+    <div id="notfall-detail" style="display:none;"></div>
+  </div>
+
+  <div class="page" id="page-medikamente">
+    <div class="page-header">
+      <div class="page-title">Medikamente</div>
+      <div class="page-desc">Nachschlagewerk für Wirkstoffe und Dosierungen</div>
+    </div>
+    <div class="search-box">
+      <span class="search-icon">&#128269;</span>
+      <input type="text" class="form-input" id="med-search" placeholder="Medikament oder Wirkstoff suchen..." oninput="filterMed()">
+    </div>
+    <div id="med-content"></div>
+  </div>
+
+  <div class="page" id="page-differentialdiagnosen">
+    <div class="page-header">
+      <div class="page-title">Differentialdiagnosen</div>
+      <div class="page-desc">Symptom-basierte Differentialdiagnostik</div>
+    </div>
+    <div class="search-box">
+      <span class="search-icon">&#128269;</span>
+      <input type="text" class="form-input" id="dd-search" placeholder="Symptom suchen..." oninput="filterDD()">
+    </div>
+    <div class="card-grid" id="dd-list"></div>
+    <div id="dd-detail" style="display:none;"></div>
+  </div>
+
+  <div class="page" id="page-icd10">
+    <div class="page-header">
+      <div class="page-title">ICD-10 Codes</div>
+      <div class="page-desc">Durchsuchbarer Diagnosekatalog (häufige Codes)</div>
+    </div>
+    <div class="search-box">
+      <span class="search-icon">&#128269;</span>
+      <input type="text" class="form-input" id="icd-search" placeholder="Code oder Diagnose suchen..." oninput="filterICD()">
+    </div>
+    <div id="icd-content"></div>
+  </div>
+
+  <div class="page" id="page-lernkarten">
+    <div class="page-header">
+      <div class="page-title">Lernkarten</div>
+      <div class="page-desc">Flashcards mit Spaced Repetition</div>
+    </div>
+    <div id="lk-deck-list"></div>
+    <div id="lk-session" style="display:none;"></div>
+  </div>
+
+  <div class="page" id="page-notizen">
+    <div class="page-header">
+      <div class="page-title">Notizen</div>
+      <div class="page-desc">Lokales klinisches Tagebuch &mdash; gespeichert im Browser</div>
+    </div>
+    <div style="display:flex;gap:12px;margin-bottom:20px;flex-wrap:wrap;align-items:center;">
+      <button class="btn btn-primary" onclick="newNote()">+ Neue Notiz</button>
+      <button class="btn btn-secondary" onclick="exportNotes('json')" title="Als JSON exportieren">&#128190; Speichern unter</button>
+      <button class="btn btn-secondary" onclick="exportNotes('txt')" title="Als Textdatei exportieren">&#128196; Als Text</button>
+      <button class="btn btn-secondary" onclick="exportNotes('pdf')" title="Als PDF speichern">&#128462; Als PDF</button>
+      <button class="btn btn-secondary" onclick="document.getElementById('import-notes').click()" title="Notizen importieren">&#128194; Importieren</button>
+      <input type="file" id="import-notes" accept=".json" style="display:none;" onchange="importNotes(event)">
+      <div class="search-box" style="flex:1;min-width:200px;margin-bottom:0;">
+        <span class="search-icon">&#128269;</span>
+        <input type="text" class="form-input" id="note-search" placeholder="Notizen durchsuchen..." oninput="renderNotizen()">
+      </div>
+    </div>
+    <div id="note-editor" style="display:none;margin-bottom:20px;">
+      <div style="background:var(--bg-card);border:1px solid var(--border);border-radius:var(--radius);padding:20px;">
+        <input type="text" class="form-input" id="note-title" placeholder="Titel..." style="margin-bottom:12px;font-size:1.1rem;font-weight:600;">
+        <div class="form-group">
+          <label class="form-label">Kategorie</label>
+          <select class="form-select" id="note-cat">
+            <option value="allgemein">Allgemein</option>
+            <option value="patient">Patient</option>
+            <option value="übergabe">Übergabe</option>
+            <option value="lernen">Lernnotiz</option>
+            <option value="todo">To-Do</option>
+          </select>
+        </div>
+        <textarea class="form-input" id="note-body" placeholder="Inhalt..." rows="8" style="resize:vertical;font-family:inherit;line-height:1.6;"></textarea>
+        <div class="btn-group" style="margin-top:12px;">
+          <button class="btn btn-primary" onclick="saveNote()">Speichern</button>
+          <button class="btn btn-secondary" onclick="cancelNote()">Abbrechen</button>
+        </div>
+      </div>
+    </div>
+    <div id="notes-list"></div>
+  </div>
+
+</main>
+
+<script>
+// ==================== THEME / MODE / ZOOM ====================
+let currentTheme = localStorage.getItem('medtoolbox_theme') || 'nachtschicht';
+let currentMode = localStorage.getItem('medtoolbox_mode') || 'dark';
+let currentZoom = parseFloat(localStorage.getItem('medtoolbox_zoom') || '1');
+
+function setTheme(theme) {
+  currentTheme = theme;
+  document.documentElement.setAttribute('data-theme', theme);
+  localStorage.setItem('medtoolbox_theme', theme);
+  document.querySelectorAll('.theme-btn').forEach(b => {
+    b.classList.toggle('active', b.getAttribute('data-theme-id') === theme);
+  });
+}
+
+function toggleMode() {
+  currentMode = currentMode === 'dark' ? 'light' : 'dark';
+  document.documentElement.setAttribute('data-mode', currentMode);
+  localStorage.setItem('medtoolbox_mode', currentMode);
+  updateModeBtn();
+}
+
+function updateModeBtn() {
+  const btn = document.getElementById('modeToggle');
+  if (currentMode === 'dark') {
+    btn.innerHTML = '&#9790; Dunkel';
+  } else {
+    btn.innerHTML = '&#9728; Hell';
+  }
+}
+
+function zoomChange(delta) {
+  currentZoom = Math.round((currentZoom + delta) * 10) / 10;
+  if (currentZoom < 0.6) currentZoom = 0.6;
+  if (currentZoom > 1.6) currentZoom = 1.6;
+  document.documentElement.style.setProperty('--zoom', currentZoom);
+  localStorage.setItem('medtoolbox_zoom', currentZoom.toString());
+  document.getElementById('zoomLevel').textContent = Math.round(currentZoom * 100) + '%';
+}
+
+// Init theme/mode/zoom on load
+(function initPrefs() {
+  document.documentElement.setAttribute('data-theme', currentTheme);
+  document.documentElement.setAttribute('data-mode', currentMode);
+  document.documentElement.style.setProperty('--zoom', currentZoom);
+  setTimeout(() => {
+    document.querySelectorAll('.theme-btn').forEach(b => {
+      b.classList.toggle('active', b.getAttribute('data-theme-id') === currentTheme);
+    });
+    updateModeBtn();
+    document.getElementById('zoomLevel').textContent = Math.round(currentZoom * 100) + '%';
+  }, 0);
+})();
+
+// ==================== NAVIGATION ====================
+let currentPage = 'dashboard';
+
+function navigate(page) {
+  document.querySelectorAll('.page').forEach(p => p.classList.remove('active'));
+  document.querySelectorAll('.nav-item').forEach(n => n.classList.remove('active'));
+  document.getElementById('page-' + page).classList.add('active');
+  // Mark nav item active
+  document.querySelectorAll('.nav-item').forEach(n => {
+    if (n.getAttribute('onclick') === "navigate('" + page + "')") n.classList.add('active');
+  });
+  currentPage = page;
+  if (page === 'labor') renderLabor();
+  if (page === 'notfall') renderNotfall();
+  if (page === 'medikamente') renderMedikamente();
+  if (page === 'differentialdiagnosen') renderDD();
+  if (page === 'icd10') renderICD();
+  if (page === 'lernkarten') renderLernkarten();
+  if (page === 'notizen') renderNotizen();
+  // Close mobile sidebar
+  document.getElementById('sidebar').classList.remove('open');
+  document.getElementById('sidebarOverlay').classList.remove('open');
+  // Scroll to top
+  document.getElementById('mainContent').scrollTop = 0;
+}
+
+function toggleSidebar() {
+  document.getElementById('sidebar').classList.toggle('open');
+  document.getElementById('sidebarOverlay').classList.toggle('open');
+}
+
+// ==================== CALCULATOR SWITCHING ====================
+let currentCalc = 'bmi';
+const allCalcs = ['bmi','gfr','calcium','wells','chadsvasc','hasbled','childpugh','infusion','nakorr'];
+
+function showCalc(name) {
+  allCalcs.forEach(c => {
+    document.getElementById('calc-' + c).style.display = 'none';
+  });
+  document.getElementById('calc-' + name).style.display = 'block';
+  document.querySelectorAll('.calc-item').forEach(item => item.classList.remove('active'));
+  document.querySelectorAll('.calc-item').forEach(item => {
+    if (item.getAttribute('onclick') === "showCalc('" + name + "')") item.classList.add('active');
+  });
+  currentCalc = name;
+}
+
+function clearCalc(name) {
+  const panel = document.getElementById('calc-' + name);
+  panel.querySelectorAll('input[type="number"]').forEach(i => i.value = '');
+  panel.querySelectorAll('input[type="checkbox"]').forEach(i => i.checked = false);
+  panel.querySelectorAll('select').forEach(s => s.selectedIndex = 0);
+  const result = document.getElementById('result-' + name);
+  if (result) result.classList.remove('visible');
+}
+
+// ==================== BMI ====================
+function calcBMI() {
+  const w = parseFloat(document.getElementById('bmi-weight').value);
+  const h = parseFloat(document.getElementById('bmi-height').value);
+  if (!w || !h) return;
+  const bmi = w / ((h/100) * (h/100));
+  const val = bmi.toFixed(1);
+  document.getElementById('bmi-result-val').textContent = val + ' kg/m\u00B2';
+  let interp = '', tag = '';
+  if (bmi < 18.5) { interp = 'Untergewicht'; tag = '<span class="result-tag tag-warning">Untergewicht</span>'; }
+  else if (bmi < 25) { interp = 'Normalgewicht'; tag = '<span class="result-tag tag-normal">Normalgewicht</span>'; }
+  else if (bmi < 30) { interp = 'Übergewicht (Präadipositas)'; tag = '<span class="result-tag tag-warning">Übergewicht</span>'; }
+  else if (bmi < 35) { interp = 'Adipositas Grad I'; tag = '<span class="result-tag tag-danger">Adipositas I</span>'; }
+  else if (bmi < 40) { interp = 'Adipositas Grad II'; tag = '<span class="result-tag tag-danger">Adipositas II</span>'; }
+  else { interp = 'Adipositas Grad III (Adipositas permagna)'; tag = '<span class="result-tag tag-danger">Adipositas III</span>'; }
+  document.getElementById('bmi-result-text').innerHTML = interp + '<br>' + tag;
+  document.getElementById('result-bmi').classList.add('visible');
+}
+
+// ==================== GFR (CKD-EPI 2021) ====================
+function calcGFR() {
+  const scr = parseFloat(document.getElementById('gfr-creat').value);
+  const age = parseFloat(document.getElementById('gfr-age').value);
+  const sex = document.getElementById('gfr-sex').value;
+  if (!scr || !age) return;
+  // CKD-EPI 2021 (race-free)
+  let k, a, f;
+  if (sex === 'f') { k = 0.7; a = -0.241; f = 1.012; }
+  else { k = 0.9; a = -0.302; f = 1.0; }
+  const min = Math.min(scr/k, 1);
+  const max = Math.max(scr/k, 1);
+  const gfr = 142 * Math.pow(min, a) * Math.pow(max, -1.200) * Math.pow(0.9938, age) * f;
+  const val = Math.round(gfr);
+  document.getElementById('gfr-result-val').textContent = val + ' mL/min/1.73m\u00B2';
+  let interp = '', tag = '';
+  if (val >= 90) { interp = 'Stadium G1: Normal oder hoch'; tag = '<span class="result-tag tag-normal">Normal</span>'; }
+  else if (val >= 60) { interp = 'Stadium G2: Leicht eingeschränkt'; tag = '<span class="result-tag tag-normal">Leicht eingeschränkt</span>'; }
+  else if (val >= 45) { interp = 'Stadium G3a: Leicht bis mäßig eingeschränkt'; tag = '<span class="result-tag tag-warning">G3a</span>'; }
+  else if (val >= 30) { interp = 'Stadium G3b: Mäßig bis schwer eingeschränkt'; tag = '<span class="result-tag tag-warning">G3b</span>'; }
+  else if (val >= 15) { interp = 'Stadium G4: Schwer eingeschränkt'; tag = '<span class="result-tag tag-danger">G4</span>'; }
+  else { interp = 'Stadium G5: Nierenversagen'; tag = '<span class="result-tag tag-danger">G5</span>'; }
+  document.getElementById('gfr-result-text').innerHTML = interp + '<br>' + tag;
+  document.getElementById('result-gfr').classList.add('visible');
+}
+
+// ==================== CALCIUM ====================
+function calcCalcium() {
+  const ca = parseFloat(document.getElementById('ca-total').value);
+  const alb = parseFloat(document.getElementById('ca-albumin').value);
+  if (!ca || !alb) return;
+  const corrected = ca + 0.8 * (4.0 - alb);
+  document.getElementById('ca-result-val').textContent = corrected.toFixed(1) + ' mg/dL';
+  let interp = '', tag = '';
+  if (corrected < 8.5) { interp = 'Hypokalzämie'; tag = '<span class="result-tag tag-warning">Niedrig</span>'; }
+  else if (corrected <= 10.5) { interp = 'Normbereich (8.5 - 10.5 mg/dL)'; tag = '<span class="result-tag tag-normal">Normal</span>'; }
+  else { interp = 'Hyperkalzämie'; tag = '<span class="result-tag tag-danger">Erhöht</span>'; }
+  document.getElementById('ca-result-text').innerHTML = interp + '<br>' + tag;
+  document.getElementById('result-calcium').classList.add('visible');
+}
+
+// ==================== WELLS SCORE ====================
+function calcWells() {
+  let score = 0;
+  document.querySelectorAll('.wells-cb:checked').forEach(cb => {
+    score += parseInt(cb.value);
+  });
+  document.getElementById('wells-result-val').textContent = score + ' Punkte';
+  let interp = '', tag = '';
+  if (score <= 0) { interp = 'Geringe Wahrscheinlichkeit (ca. 5%)\nD-Dimer als nächster Schritt empfohlen'; tag = '<span class="result-tag tag-normal">Geringe W.</span>'; }
+  else if (score <= 2) { interp = 'Mittlere Wahrscheinlichkeit (ca. 17%)\nD-Dimer oder Ultraschall empfohlen'; tag = '<span class="result-tag tag-warning">Mittlere W.</span>'; }
+  else { interp = 'Hohe Wahrscheinlichkeit (ca. 53%)\nUltraschall empfohlen'; tag = '<span class="result-tag tag-danger">Hohe W.</span>'; }
+  document.getElementById('wells-result-text').innerHTML = interp.replace(/\n/g,'<br>') + '<br>' + tag;
+  document.getElementById('result-wells').classList.add('visible');
+}
+
+// ==================== CHA2DS2-VASc ====================
+function calcCHADS() {
+  let score = 0;
+  document.querySelectorAll('.chads-cb:checked').forEach(cb => {
+    score += parseInt(cb.value);
+  });
+  document.getElementById('chads-result-val').textContent = score + ' Punkte';
+  let interp = '', tag = '';
+  if (score === 0) { interp = 'Niedriges Risiko\nKeine Antikoagulation empfohlen'; tag = '<span class="result-tag tag-normal">Niedriges Risiko</span>'; }
+  else if (score === 1) { interp = 'Niedriges bis moderates Risiko\nAntikoagulation erwägen (v.a. bei Männern)'; tag = '<span class="result-tag tag-warning">Moderat</span>'; }
+  else { interp = 'Moderates bis hohes Risiko (Score ' + score + ')\nOrale Antikoagulation empfohlen'; tag = '<span class="result-tag tag-danger">Hoch</span>'; }
+  document.getElementById('chads-result-text').innerHTML = interp.replace(/\n/g,'<br>') + '<br>' + tag;
+  document.getElementById('result-chadsvasc').classList.add('visible');
+}
+
+// ==================== HAS-BLED ====================
+function calcHASBLED() {
+  let score = 0;
+  document.querySelectorAll('.hasbled-cb:checked').forEach(cb => {
+    score += parseInt(cb.value);
+  });
+  document.getElementById('hasbled-result-val').textContent = score + ' Punkte';
+  let interp = '', tag = '';
+  if (score <= 1) { interp = 'Niedriges Blutungsrisiko'; tag = '<span class="result-tag tag-normal">Niedrig</span>'; }
+  else if (score === 2) { interp = 'Moderates Blutungsrisiko\nSorgfältige Abwägung empfohlen'; tag = '<span class="result-tag tag-warning">Moderat</span>'; }
+  else { interp = 'Hohes Blutungsrisiko (Score ' + score + ')\nEngmaschige Überwachung empfohlen\nAntikoagulation nicht zwingend kontraindiziert'; tag = '<span class="result-tag tag-danger">Hoch</span>'; }
+  document.getElementById('hasbled-result-text').innerHTML = interp.replace(/\n/g,'<br>') + '<br>' + tag;
+  document.getElementById('result-hasbled').classList.add('visible');
+}
+
+// ==================== CHILD-PUGH ====================
+function calcChildPugh() {
+  const bili = parseInt(document.getElementById('cp-bili').value);
+  const alb = parseInt(document.getElementById('cp-alb').value);
+  const inr = parseInt(document.getElementById('cp-inr').value);
+  const asc = parseInt(document.getElementById('cp-asc').value);
+  const enc = parseInt(document.getElementById('cp-enc').value);
+  const score = bili + alb + inr + asc + enc;
+  let grade = '', interp = '', tag = '';
+  if (score <= 6) { grade = 'A'; interp = 'Child A (5-6 Punkte)\nGut kompensierte Zirrhose\n1-Jahres-Überlebensrate: ca. 100%'; tag = '<span class="result-tag tag-normal">Child A</span>'; }
+  else if (score <= 9) { grade = 'B'; interp = 'Child B (7-9 Punkte)\nSignifikante Funktionseinschränkung\n1-Jahres-Überlebensrate: ca. 80%'; tag = '<span class="result-tag tag-warning">Child B</span>'; }
+  else { grade = 'C'; interp = 'Child C (10-15 Punkte)\nDekompensierte Zirrhose\n1-Jahres-Überlebensrate: ca. 45%'; tag = '<span class="result-tag tag-danger">Child C</span>'; }
+  document.getElementById('cp-result-val').textContent = score + ' Punkte (Child ' + grade + ')';
+  document.getElementById('cp-result-text').innerHTML = interp.replace(/\n/g,'<br>') + '<br>' + tag;
+  document.getElementById('result-childpugh').classList.add('visible');
+}
+
+// ==================== INFUSION ====================
+function calcInfusion() {
+  const vol = parseFloat(document.getElementById('inf-vol').value);
+  const time = parseFloat(document.getElementById('inf-time').value);
+  const factor = parseInt(document.getElementById('inf-factor').value);
+  if (!vol || !time) return;
+  const mlh = vol / time;
+  const drops = (vol * factor) / (time * 60);
+  document.getElementById('inf-result-val').textContent = mlh.toFixed(1) + ' mL/h';
+  document.getElementById('inf-result-text').innerHTML =
+    'Tropfgeschwindigkeit: ' + drops.toFixed(1) + ' Tropfen/min<br>' +
+    'Tropfenfaktor: ' + factor + ' Tropfen/mL<br>' +
+    'Gesamtvolumen: ' + vol + ' mL in ' + time + ' Stunden';
+  document.getElementById('result-infusion').classList.add('visible');
+}
+
+// ==================== KORRIGIERTES NATRIUM ====================
+function calcNaKorr() {
+  const na = parseFloat(document.getElementById('na-measured').value);
+  const gluc = parseFloat(document.getElementById('na-glucose').value);
+  if (!na || !gluc) return;
+  // Katz-Formel: Na_korr = Na_gem + 1.6 * ((Glukose - 100) / 100)
+  const corrected = na + 1.6 * ((gluc - 100) / 100);
+  document.getElementById('na-result-val').textContent = corrected.toFixed(1) + ' mmol/L';
+  let interp = '', tag = '';
+  if (corrected < 135) { interp = 'Hyponatriämie (Referenz: 135-145 mmol/L)'; tag = '<span class="result-tag tag-warning">Niedrig</span>'; }
+  else if (corrected <= 145) { interp = 'Normbereich (135-145 mmol/L)'; tag = '<span class="result-tag tag-normal">Normal</span>'; }
+  else { interp = 'Hypernatriämie'; tag = '<span class="result-tag tag-danger">Erhöht</span>'; }
+  document.getElementById('na-result-text').innerHTML =
+    'Gemessen: ' + na + ' mmol/L bei Glukose ' + gluc + ' mg/dL<br>' +
+    'Korrektur nach Katz: +1.6 mmol/L pro 100 mg/dL Glukose über 100<br>' +
+    interp + '<br>' + tag;
+  document.getElementById('result-nakorr').classList.add('visible');
+}
+
+// ==================== LABORWERTE ====================
+const laborData = [
+  {cat:'Blutbild',items:[
+    {name:'Hämoglobin (Hb)',male:'13.5 - 17.5 g/dL',female:'12.0 - 16.0 g/dL',info:'Erniedrigt: Anämie. Erhöht: Polyglobulie, Dehydratation.'},
+    {name:'Hämatokrit (Hkt)',male:'40 - 54 %',female:'36 - 48 %',info:'Anteil der Erythrozyten am Gesamtblut.'},
+    {name:'Erythrozyten',male:'4.5 - 5.9 Mio/\u00B5L',female:'4.0 - 5.2 Mio/\u00B5L',info:'Erniedrigt: Anämie. Erhöht: Polyglobulie.'},
+    {name:'Leukozyten',male:'4.0 - 10.0 Tsd/\u00B5L',female:'4.0 - 10.0 Tsd/\u00B5L',info:'Erhöht: Infektion, Leukämie. Erniedrigt: Immunsuppression.'},
+    {name:'Thrombozyten',male:'150 - 400 Tsd/\u00B5L',female:'150 - 400 Tsd/\u00B5L',info:'Erniedrigt: Blutungsrisiko. Erhöht: Thromboserisiko.'},
+    {name:'MCV',male:'80 - 96 fL',female:'80 - 96 fL',info:'Mikrozytär <80 (Eisenmangel). Makrozytär >96 (B12/Folsäure).'},
+    {name:'MCH',male:'28 - 33 pg',female:'28 - 33 pg',info:'Mittlerer Hb-Gehalt pro Erythrozyt.'},
+    {name:'Retikulozyten',male:'0.5 - 2.5 %',female:'0.5 - 2.5 %',info:'Erhöht bei Regeneration (Blutung, Hämolyse). Erniedrigt bei Bildungsstörung.'}
+  ]},
+  {cat:'Gerinnung',items:[
+    {name:'Quick / INR',male:'70 - 130 % / 0.85 - 1.15',female:'70 - 130 % / 0.85 - 1.15',info:'Extrinsisches System. Therapeutisch unter Marcumar: INR 2-3.'},
+    {name:'aPTT',male:'26 - 36 sek',female:'26 - 36 sek',info:'Intrinsisches System. Verlängert bei Heparin, Hämophilie.'},
+    {name:'Fibrinogen',male:'200 - 400 mg/dL',female:'200 - 400 mg/dL',info:'Akute-Phase-Protein. Erniedrigt bei DIC, Lebersynthesestörung.'},
+    {name:'D-Dimere',male:'< 0.5 mg/L',female:'< 0.5 mg/L',info:'Erhöht bei Thrombose, Lungenembolie, DIC. Hoher neg. prädiktiver Wert.'}
+  ]},
+  {cat:'Elektrolyte',items:[
+    {name:'Natrium (Na+)',male:'135 - 145 mmol/L',female:'135 - 145 mmol/L',info:'Hyponatriämie: Verwirrtheit, Krampf. Hypernatriämie: Exsikkose.'},
+    {name:'Kalium (K+)',male:'3.5 - 5.0 mmol/L',female:'3.5 - 5.0 mmol/L',info:'Kritisch! Hypo-/Hyperkaliämie: Herzrhythmusstörungen.'},
+    {name:'Calcium (Ca2+)',male:'2.2 - 2.6 mmol/L',female:'2.2 - 2.6 mmol/L',info:'Albumin-korrigiert betrachten. Hypokalz: Tetanie.'},
+    {name:'Magnesium (Mg2+)',male:'0.7 - 1.1 mmol/L',female:'0.7 - 1.1 mmol/L',info:'Mangel: Muskelkrämpfe, Arrhythmien.'},
+    {name:'Phosphat',male:'0.84 - 1.45 mmol/L',female:'0.84 - 1.45 mmol/L',info:'Erhöht bei Niereninsuffizienz. Erniedrigt bei Refeeding.'},
+    {name:'Chlorid',male:'96 - 106 mmol/L',female:'96 - 106 mmol/L',info:'Wichtig für Säure-Basen-Haushalt und Anionenlücke.'}
+  ]},
+  {cat:'Leber',items:[
+    {name:'GOT / AST',male:'< 50 U/L',female:'< 35 U/L',info:'Leberzellschäden, auch Herz und Muskel. De-Ritis-Quotient beachten.'},
+    {name:'GPT / ALT',male:'< 50 U/L',female:'< 35 U/L',info:'Leberspezifischer als GOT. Erhöht bei Hepatitis.'},
+    {name:'GGT',male:'< 60 U/L',female:'< 40 U/L',info:'Cholestase, Alkoholabusus. Sehr sensitiv für Lebererkrankungen.'},
+    {name:'Alk. Phosphatase (AP)',male:'40 - 130 U/L',female:'35 - 105 U/L',info:'Cholestase, Knochenerkrankungen. Bei Kindern physiologisch erhöht.'},
+    {name:'Bilirubin gesamt',male:'< 1.2 mg/dL',female:'< 1.2 mg/dL',info:'Ikterus ab ca. 2 mg/dL. Direkt/indirekt differenzieren.'},
+    {name:'Albumin',male:'3.5 - 5.5 g/dL',female:'3.5 - 5.5 g/dL',info:'Syntheseleistung der Leber. Erniedrigt: Zirrhose, Malnutrition.'},
+    {name:'Cholinesterase (CHE)',male:'5.3 - 12.9 kU/L',female:'4.3 - 11.3 kU/L',info:'Syntheseparameter. Erniedrigt bei Leberinsuffizienz.'}
+  ]},
+  {cat:'Niere',items:[
+    {name:'Kreatinin',male:'0.7 - 1.3 mg/dL',female:'0.5 - 1.1 mg/dL',info:'Steigt erst bei >50% GFR-Verlust (kreatininblinder Bereich).'},
+    {name:'Harnstoff (BUN)',male:'17 - 43 mg/dL',female:'17 - 43 mg/dL',info:'Erhöht bei Niereninsuffizienz, GI-Blutung, Katabolie.'},
+    {name:'Harnsäure',male:'3.5 - 7.0 mg/dL',female:'2.5 - 5.7 mg/dL',info:'Erhöht: Gicht. Stark erhöht bei Tumorlysesyndrom.'},
+    {name:'Cystatin C',male:'0.53 - 0.95 mg/L',female:'0.53 - 0.95 mg/L',info:'GFR-Marker, unabhängig von Muskelmasse. Sensitiver als Kreatinin.'}
+  ]},
+  {cat:'Stoffwechsel',items:[
+    {name:'Glukose (nüchtern)',male:'70 - 100 mg/dL',female:'70 - 100 mg/dL',info:'100-125: Prädiabetes. >=126: Diabetes (2x bestätigen).'},
+    {name:'HbA1c',male:'< 5.7 %',female:'< 5.7 %',info:'Langzeit-BZ (8-12 Wo). >=6.5%: Diabetes. Ziel meist <7%.'},
+    {name:'Gesamt-Cholesterin',male:'< 200 mg/dL',female:'< 200 mg/dL',info:'Kardiovaskulärer Risikofaktor. LDL-Zielwert risikoabhängig.'},
+    {name:'LDL-Cholesterin',male:'< 116 mg/dL',female:'< 116 mg/dL',info:'Zielwert je nach Risiko: niedrig <116, hoch <70, sehr hoch <55.'},
+    {name:'HDL-Cholesterin',male:'> 40 mg/dL',female:'> 50 mg/dL',info:'Protektiv. Je höher, desto besser.'},
+    {name:'Triglyceride',male:'< 150 mg/dL',female:'< 150 mg/dL',info:'Erhöht: Pankreatitis-Risiko ab >500. Nüchternabnahme wichtig.'}
+  ]},
+  {cat:'Entzündung',items:[
+    {name:'CRP',male:'< 0.5 mg/dL',female:'< 0.5 mg/dL',info:'Unspezifisch. Bakteriell oft >5-10. Viral eher niedrig-moderat.'},
+    {name:'Procalcitonin (PCT)',male:'< 0.1 ng/mL',female:'< 0.1 ng/mL',info:'Spezifischer für bakterielle Infektion. >0.5: wahrscheinlich. >2: schwer.'},
+    {name:'BSG (1h)',male:'< 15 mm/h',female:'< 20 mm/h',info:'Unspezifisch. Erhöht bei Infekt, Tumor, Autoimmun. Träge Kinetik.'},
+    {name:'Interleukin-6 (IL-6)',male:'< 7 pg/mL',female:'< 7 pg/mL',info:'Frühmarker. Steigt vor CRP an. Hilfreich bei Neugeborenen-Sepsis.'}
+  ]},
+  {cat:'Schilddrüse',items:[
+    {name:'TSH',male:'0.4 - 4.0 mU/L',female:'0.4 - 4.0 mU/L',info:'Screeningparameter. Erhöht: Hypothyreose. Erniedrigt: Hyperthyreose.'},
+    {name:'fT3',male:'2.0 - 4.4 pg/mL',female:'2.0 - 4.4 pg/mL',info:'Aktives Schilddrüsenhormon. Bestimmung bei supprimiertem TSH.'},
+    {name:'fT4',male:'0.9 - 1.7 ng/dL',female:'0.9 - 1.7 ng/dL',info:'Freies Thyroxin. Gemeinsam mit TSH zur DD.'}
+  ]},
+  {cat:'Herz',items:[
+    {name:'Troponin I/T (hs)',male:'< 14 / < 34 ng/L',female:'< 14 / < 22 ng/L',info:'Herzmuskelschäden. Seriell messen (0/3h oder 0/1h). ACS-Diagnostik.'},
+    {name:'CK gesamt',male:'< 190 U/L',female:'< 170 U/L',info:'Muskelschäden (Herz, Skelett). Erhöht nach Sport, Rhabdomyolyse.'},
+    {name:'CK-MB',male:'< 25 U/L',female:'< 25 U/L',info:'Herzspezifischer Anteil. CK-MB/CK >6% spricht für Myokardschäden.'},
+    {name:'NT-proBNP',male:'< 125 pg/mL',female:'< 125 pg/mL',info:'Herzinsuffizienz-Marker. Altersabhängig. Ausschluss bei <125 (< 300 akut).'},
+    {name:'LDH',male:'< 250 U/L',female:'< 250 U/L',info:'Unspezifisch. Hämolyse, Leber, Herz, Tumor. Isoenzyme differenzieren.'}
+  ]}
+];
+
+function renderLabor(filter='') {
+  const c = document.getElementById('labor-content');
+  const f = filter.toLowerCase();
+  let html = '';
+  laborData.forEach(cat => {
+    const items = cat.items.filter(i => !f || i.name.toLowerCase().includes(f) || i.info.toLowerCase().includes(f));
+    if (items.length === 0) return;
+    html += '<div style="margin-bottom:24px;"><div style="font-size:1.05rem;font-weight:600;margin-bottom:12px;color:var(--accent);">' + cat.cat + '</div>';
+    html += '<div style="overflow-x:auto;"><table style="width:100%;border-collapse:collapse;">';
+    html += '<tr style="border-bottom:1px solid var(--border);"><th style="text-align:left;padding:10px 12px;font-size:0.8rem;color:var(--text-muted);">Parameter</th><th style="text-align:left;padding:10px 12px;font-size:0.8rem;color:var(--text-muted);">Männer</th><th style="text-align:left;padding:10px 12px;font-size:0.8rem;color:var(--text-muted);">Frauen</th><th style="text-align:left;padding:10px 12px;font-size:0.8rem;color:var(--text-muted);">Hinweis</th></tr>';
+    items.forEach(i => {
+      html += '<tr style="border-bottom:1px solid var(--border);transition:0.2s;" onmouseover="this.style.background=\'var(--bg-card-hover)\'" onmouseout="this.style.background=\'none\'">';
+      html += '<td style="padding:10px 12px;font-weight:500;font-size:0.9rem;">' + i.name + '</td>';
+      html += '<td style="padding:10px 12px;font-size:0.85rem;color:var(--text-secondary);">' + i.male + '</td>';
+      html += '<td style="padding:10px 12px;font-size:0.85rem;color:var(--text-secondary);">' + i.female + '</td>';
+      html += '<td style="padding:10px 12px;font-size:0.8rem;color:var(--text-muted);max-width:300px;">' + i.info + '</td>';
+      html += '</tr>';
+    });
+    html += '</table></div></div>';
+  });
+  if (!html) html = '<div style="text-align:center;color:var(--text-muted);padding:40px;">Kein Laborwert gefunden</div>';
+  c.innerHTML = html;
+}
+function filterLabor() { renderLabor(document.getElementById('labor-search').value); }
+
+// ==================== NOTFALL-ALGORITHMEN ====================
+const notfallData = [
+  {id:'reanimation',icon:'&#10084;',title:'Reanimation (ALS)',desc:'Advanced Life Support Algorithmus',steps:[
+    {t:'Sicherheit prüfen',d:'Eigenschutz! Umgebung sicher?',color:'var(--warning)'},
+    {t:'Bewusstsein prüfen',d:'Ansprechen, Anfassen, Schmerzreiz',color:'var(--accent)'},
+    {t:'Hilfe rufen',d:'Notruf 112, AED anfordern',color:'var(--danger)'},
+    {t:'Atemwege freimachen',d:'Kopf überstrecken, Kinn anheben. Atmung prüfen (max 10 Sek)',color:'var(--accent)'},
+    {t:'Keine normale Atmung: CPR starten',d:'30:2 (Kompression:Beatmung)\nDruckpunkt: Untere Sternumhälfte\nTiefe: 5-6 cm, Frequenz: 100-120/min',color:'var(--danger)'},
+    {t:'AED / Defibrillator',d:'Schockbarer Rhythmus (VF/pVT): Schock, dann sofort 2 Min CPR\nNicht schockbar (Asystolie/PEA): CPR fortsetzen',color:'var(--warning)'},
+    {t:'Medikamente',d:'Adrenalin 1mg i.v. alle 3-5 Min\nAmiodaron 300mg i.v. nach 3. Schock (dann 150mg nach 5. Schock)',color:'var(--accent)'},
+    {t:'Reversible Ursachen (4H + HITS)',d:'Hypoxie, Hypovolämie, Hypo-/Hyperkaliämie, Hypothermie\nHerzbeuteltamponade, Intoxikation, Thromboembolie, Spannungspneumo',color:'var(--text-secondary)'}
+  ]},
+  {id:'anaphylaxie',icon:'&#9888;',title:'Anaphylaxie',desc:'Akute allergische Reaktion',steps:[
+    {t:'Erkennung',d:'Urtikaria, Angioödem, Dyspnoe, Hypotonie, GI-Symptome\nSchwergrade: I (Haut) - IV (Kreislaufstillstand)',color:'var(--warning)'},
+    {t:'Sofortmaßnahmen',d:'Allergenexposition stoppen\nHilfe rufen, Notruf 112\nFlachlagerung (Beine hoch) oder Sitzend bei Atemnot',color:'var(--danger)'},
+    {t:'Adrenalin i.m.',d:'Erwachsene: 0.5 mg i.m. (= 0.5 mL der 1:1000 Lösung)\nKinder: 0.01 mg/kg i.m.\nInjektion in Oberschenkel-Außenseite\nWiederholung alle 5-15 Min möglich',color:'var(--danger)'},
+    {t:'Volumen',d:'Kristalloide 500-1000 mL Bolus i.v.\nKinder: 20 mL/kg',color:'var(--accent)'},
+    {t:'Adjuvante Therapie',d:'Prednisolon 250-500 mg i.v.\nDimetinden (Fenistil) 4 mg i.v.\nRanitidin 50 mg i.v.\nSalbutamol inhalativ bei Bronchospasmus',color:'var(--accent)'},
+    {t:'Überwachung',d:'Mindestens 24h Monitoring (biphasische Reaktion möglich)\nAdrenalin-Autoinjektor verordnen\nAllergologische Abklärung planen',color:'var(--text-secondary)'}
+  ]},
+  {id:'acs',icon:'&#129729;',title:'Akutes Koronarsyndrom',desc:'STEMI / NSTEMI / Instabile AP',steps:[
+    {t:'Erkennung',d:'Brustschmerz, Ausstrahlung, Dyspnoe, Kaltschweiß\n12-Kanal-EKG innerhalb 10 Min!',color:'var(--warning)'},
+    {t:'Basistherapie (MONA)',d:'Morphin 3-5 mg i.v. bei Schmerzen\nO2 nur bei SpO2 <90%\nNitro 0.4 mg s.l. (NICHT bei RR<90, PDE5-Hemmer, Rechtsherzinfarkt)\nASS 150-300 mg i.v.',color:'var(--accent)'},
+    {t:'STEMI',d:'Sofortige Katheter-Alarmierung (Door-to-Balloon <60 Min)\nHeparin 70 IE/kg i.v. (max 5000 IE)\nP2Y12-Hemmer: Ticagrelor 180mg oder Prasugrel 60mg',color:'var(--danger)'},
+    {t:'NSTEMI / Instabile AP',d:'Risikostratifikation (GRACE-Score)\nHohes Risiko: Katheter <24h\nSehr hohes Risiko: Sofort-Katheter\nAntikoagulation + duale Plättchenhemmung',color:'var(--warning)'},
+    {t:'Komplikationen',d:'Rhythmusstörungen, kardiogener Schock, Perikarderguss\nDefibrillator-Bereitschaft, Katecholamine bei Schock',color:'var(--danger)'}
+  ]},
+  {id:'schlaganfall',icon:'&#129504;',title:'Schlaganfall',desc:'Akuter ischämischer Insult',steps:[
+    {t:'FAST-Test',d:'Face: Gesichtslähmung?\nArms: Armvorhalteversuch?\nSpeech: Sprachstörung?\nTime: Sofort 112!',color:'var(--warning)'},
+    {t:'Präklin. Management',d:'Stroke-Unit Anmeldung\nBZ messen (Hypoglykämie ausschließen!)\nRR nicht senken (außer >220/120)\nLiegende Infusion, kein Heparin',color:'var(--accent)'},
+    {t:'Klinik: Diagnostik',d:'cCT nativ (Blutung ausschließen!) <25 Min\nCT-Angiographie\nNIHSS erheben\nLabor: Gerinnung, BZ, Blutbild',color:'var(--accent)'},
+    {t:'Lysetherapie (rtPA)',d:'Alteplase 0.9 mg/kg (max 90 mg)\n10% als Bolus, Rest über 60 Min\nZeitfenster: <4.5h nach Symptombeginn\nKontraindikationen beachten!',color:'var(--danger)'},
+    {t:'Thrombektomie',d:'Bei proximalem Großgefäßverschluss\nZeitfenster: bis 6h (selektiert bis 24h)\nKombination mit Lyse möglich',color:'var(--danger)'},
+    {t:'Stroke-Unit Monitoring',d:'Vitalzeichen, Neurologie alle 1-2h\nRR-Management, BZ 140-180 mg/dL\nDysphagie-Screening vor Nahrungsaufnahme',color:'var(--text-secondary)'}
+  ]},
+  {id:'hyperkali',icon:'&#9889;',title:'Hyperkaliämie',desc:'Kalium >5.5 mmol/L',steps:[
+    {t:'Schweregrad',d:'Leicht: 5.5-6.0 mmol/L\nModerat: 6.0-6.5 mmol/L\nSchwer: >6.5 mmol/L oder EKG-Veränderungen',color:'var(--warning)'},
+    {t:'EKG-Veränderungen',d:'Spitze T-Wellen > P-Abflachung > QRS-Verbreiterung > Sinuswelle\nLebensbedrohlich bei QRS >120ms!',color:'var(--danger)'},
+    {t:'1. Kardioprotektion',d:'Calciumgluconat 10% 10-20 mL i.v. über 2-3 Min\nSchützt Myokard, senkt K+ nicht!\nWirkt in 1-3 Min, Dauer 30-60 Min',color:'var(--danger)'},
+    {t:'2. K+ intrazellulär verschieben',d:'Insulin 10 IE + Glukose 25g i.v. (BZ-Kontrolle!)\nSalbutamol 10-20 mg vernebelt\nNatriumbicarbonat 50 mL 8.4% (bei Azidose)',color:'var(--accent)'},
+    {t:'3. K+ eliminieren',d:'Furosemid 40-80 mg i.v.\nNatriumpolystyrolsulfonat (Resonium) p.o./rektal\nDialyse bei Therapieversagen',color:'var(--accent)'},
+    {t:'Ursachensuche',d:'Niereninsuffizienz, Medikamente (ACE-Hemmer, Spironolacton, NSAR)\nAzidose, Zellzerfall (Rhabdomyolyse, Hämolyse)',color:'var(--text-secondary)'}
+  ]},
+  {id:'sepsis',icon:'&#129440;',title:'Sepsis',desc:'Sepsis / Septischer Schock',steps:[
+    {t:'Erkennung (qSOFA)',d:'Atemfrequenz >=22/min\nVeränderte Bewusstseinslage (GCS<15)\nSyst. RR <=100 mmHg\n>=2 Punkte: Sepsis wahrscheinlich',color:'var(--warning)'},
+    {t:'Hour-1-Bundle (Stunde 1!)',d:'Laktat messen (Ziel: Normalisierung)\nBlutkulturen VOR Antibiotika (2x2 Sets)\nBreitspektrum-Antibiotika i.v.\nKristalloide 30 mL/kg bei Hypotonie/Laktat >=4\nVasopressoren bei MAP <65 trotz Volumen',color:'var(--danger)'},
+    {t:'Antibiose (empirisch)',d:'Ambulant erworben: Piperacillin/Tazobactam\nNosokomial: + Vancomycin erwägen\nAbdominal: Meropenem\nAnpassung nach Kultur und Antibiogramm',color:'var(--accent)'},
+    {t:'Vasopressoren',d:'1. Wahl: Noradrenalin (Ziel MAP >=65 mmHg)\n2. Wahl: + Vasopressin 0.03 IE/min\n3. Bei kardialer Dysfunktion: + Dobutamin',color:'var(--accent)'},
+    {t:'Weitere Maßnahmen',d:'Hydrocortison 200 mg/d bei refraktärem Schock\nBZ-Kontrolle (Ziel <180 mg/dL)\nNierenersatztherapie bei Indikation\nLungenprotektive Beatmung bei ARDS',color:'var(--text-secondary)'}
+  ]}
+];
+
+function renderNotfall() {
+  const list = document.getElementById('notfall-list');
+  const detail = document.getElementById('notfall-detail');
+  detail.style.display = 'none';
+  list.style.display = '';
+  list.innerHTML = notfallData.map(n =>
+    '<div class="card" onclick="showNotfall(\'' + n.id + '\')">' +
+    '<div class="card-icon">' + n.icon + '</div>' +
+    '<div class="card-title">' + n.title + '</div>' +
+    '<div class="card-desc">' + n.desc + '</div></div>'
+  ).join('');
+}
+
+function showNotfall(id) {
+  const n = notfallData.find(x => x.id === id);
+  if (!n) return;
+  document.getElementById('notfall-list').style.display = 'none';
+  const d = document.getElementById('notfall-detail');
+  d.style.display = 'block';
+  let html = '<button class="btn btn-secondary" onclick="renderNotfall()" style="margin-bottom:20px;">&#8592; Zurück</button>';
+  html += '<div style="font-size:1.4rem;font-weight:700;margin-bottom:4px;">' + n.icon + ' ' + n.title + '</div>';
+  html += '<div style="color:var(--text-secondary);margin-bottom:24px;">' + n.desc + '</div>';
+  n.steps.forEach((s,i) => {
+    html += '<div style="display:flex;gap:16px;margin-bottom:16px;">';
+    html += '<div style="min-width:36px;height:36px;border-radius:50%;background:' + s.color + ';color:var(--bg-primary);display:flex;align-items:center;justify-content:center;font-weight:700;font-size:0.9rem;">' + (i+1) + '</div>';
+    html += '<div style="flex:1;background:var(--bg-card);border:1px solid var(--border);border-radius:var(--radius);padding:16px;">';
+    html += '<div style="font-weight:600;margin-bottom:6px;">' + s.t + '</div>';
+    html += '<div style="font-size:0.85rem;color:var(--text-secondary);line-height:1.7;white-space:pre-line;">' + s.d + '</div>';
+    html += '</div></div>';
+  });
+  d.innerHTML = html;
+}
+
+// ==================== MEDIKAMENTE ====================
+const medData = [
+  {cat:'Notfallmedikamente',items:[
+    {name:'Adrenalin (Epinephrin)',dose:'Reanimation: 1 mg i.v. alle 3-5 min\nAnaphylaxie: 0.5 mg i.m.\nKinder: 0.01 mg/kg',ind:'Reanimation, Anaphylaxie, schwere Bradykardie',ki:'Keine bei vitaler Indikation',nw:'Tachykardie, Hypertonie, Arrhythmien'},
+    {name:'Amiodaron',dose:'VF/pVT: 300 mg i.v. Bolus, dann 150 mg\nTachyarrhythmie: 5 mg/kg über 20 Min',ind:'Kammerflimmern, Tachyarrhythmien',ki:'Schilddrüsenerkrankungen, Jodallergie, QT-Verlängerung',nw:'Bradykardie, Hypotonie, Schilddrüse, Lunge, Leber'},
+    {name:'Atropin',dose:'Bradykardie: 0.5 mg i.v., max 3 mg\nOrganophosphat-Vergiftung: 2-4 mg i.v.',ind:'Symptomatische Bradykardie, Vergiftung',ki:'Engwinkelglaukom, Tachyarrhythmie',nw:'Tachykardie, Mundtrockenheit, Mydriasis'},
+    {name:'Noradrenalin',dose:'0.05-0.5 mcg/kg/min i.v.\nZiel: MAP >=65 mmHg',ind:'Septischer Schock, Hypotonie',ki:'Keine bei vitaler Indikation',nw:'Tachykardie, Arrhythmie, periphere Ischämie'}
+  ]},
+  {cat:'Analgetika / Antipyretika',items:[
+    {name:'Paracetamol',dose:'500-1000 mg p.o./i.v. alle 6-8h\nMax 4 g/Tag (3 g bei Leberinsuff.)',ind:'Schmerzen, Fieber',ki:'Schwere Leberinsuffizienz',nw:'Lebertoxisch bei Überdosis! Antidot: NAC'},
+    {name:'Ibuprofen',dose:'400-600 mg p.o. alle 6-8h\nMax 2400 mg/Tag',ind:'Schmerzen, Fieber, Entzündung',ki:'GI-Ulzera, Niereninsuffizienz, 3. Trimenon, ASS-Unverträglichkeit',nw:'GI-Blutung, Nierenschäden, kardiovaskulär'},
+    {name:'Metamizol (Novalgin)',dose:'500-1000 mg p.o./i.v. alle 6-8h\nMax 4-5 g/Tag, langsam i.v.!',ind:'Starke Schmerzen, Koliken, Fieber',ki:'Knochenmark-Erkrankungen, Porphyrie',nw:'Agranulozytose (selten!), Hypotonie bei schneller i.v.'},
+    {name:'Morphin',dose:'2-10 mg i.v. titriert (1-2 mg Boli)\n10-30 mg p.o. alle 4h',ind:'Starke Schmerzen, ACS, Lungenödem',ki:'Atemdepression, akutes Abdomen (relativ), MAO-Hemmer',nw:'Atemdepression, Übelkeit, Obstipation, Sedierung'}
+  ]},
+  {cat:'Antibiotika',items:[
+    {name:'Amoxicillin',dose:'500-1000 mg p.o. alle 8h',ind:'Atemwegsinfekte, Otitis, Harnwegsinfekte',ki:'Penicillinallergie, Mononukleose (Exanthem!)',nw:'Diarrhö, Exanthem, allergische Reaktion'},
+    {name:'Amoxicillin/Clavulansäure',dose:'875/125 mg p.o. alle 12h\n2.2 g i.v. alle 8h',ind:'Atemwegsinfekte, Haut, Harnwege, Bisse',ki:'Penicillinallergie, Leberschäden durch Medikament',nw:'Diarrhö, Leberwerterhöhung, allergisch'},
+    {name:'Ceftriaxon',dose:'1-2 g i.v. alle 24h\nMeningitis: 2 g alle 12h',ind:'Schwere Infektionen, Meningitis, Pneumonie',ki:'Cephalosporinallergie, Neugeborene mit Hyperbilirubinämie',nw:'Diarrhö, Gallensteine, allergisch'},
+    {name:'Piperacillin/Tazobactam',dose:'4.5 g i.v. alle 6-8h',ind:'Schwere Infektionen, Sepsis, nosokomiale Pneumonie',ki:'Penicillinallergie',nw:'Diarrhö, Thrombozytopenie, allergisch'},
+    {name:'Meropenem',dose:'1 g i.v. alle 8h\nMeningitis: 2 g alle 8h',ind:'Multiresistente Keime, schwere Sepsis',ki:'Carbapenemallergie',nw:'Diarrhö, Krampfanfälle, allergisch'},
+    {name:'Ciprofloxacin',dose:'250-500 mg p.o. alle 12h\n400 mg i.v. alle 8-12h',ind:'Harnwegsinfekte, Pseudomonas',ki:'Kinder (Knorpelschaden), QT-Verlängerung, Sehnenprobleme',nw:'Sehnenruptur, QT-Verlängerung, ZNS, Photosensi.'}
+  ]},
+  {cat:'Kardiovaskulär',items:[
+    {name:'Metoprolol',dose:'25-200 mg/Tag p.o.\nAkut: 5 mg langsam i.v.',ind:'Hypertonie, KHK, Tachykardie, Herzinsuffizienz',ki:'AV-Block >I, Bradykardie, Asthma, dekompensierte HI',nw:'Bradykardie, Hypotonie, Müdigkeit, Bronchospasmus'},
+    {name:'Ramipril',dose:'1.25-10 mg/Tag p.o.',ind:'Hypertonie, Herzinsuffizienz, Post-MI, Nephropathie',ki:'Schwangerschaft, bilaterale Nierenarterienstenose, Angioödem',nw:'Trockener Husten (10%), Hyperkaliämie, Angioödem'},
+    {name:'Amlodipin',dose:'5-10 mg/Tag p.o.',ind:'Hypertonie, stabile Angina pectoris',ki:'Instabile AP, Aortenstenose (schwer), Schock',nw:'Knöchelödeme, Flush, Kopfschmerz'},
+    {name:'Furosemid',dose:'20-80 mg p.o./i.v.\nLungenödem: 40-80 mg i.v.',ind:'Ödeme, Herzinsuffizienz, Lungenödem, Hyperkaliämie',ki:'Anurie, Hypovolämie, Hypokaliämie',nw:'Hypokaliämie, Hyponatriämie, Dehydratation'},
+    {name:'ASS (Aspirin)',dose:'Thrombozytenaggregation: 100 mg/Tag\nACS: 150-300 mg i.v. Loading',ind:'KHK, Post-Stent, ACS, Sekundärprävention',ki:'Aktive Blutung, Ulzera, ASS-Asthma, Kinder (Reye)',nw:'GI-Blutung, Ulzera, Bronchospasmus'},
+    {name:'Heparin (unfraktioniert)',dose:'Bolus: 5000 IE i.v.\nPerfusor: 15-25 IE/kg/h (aPTT-gesteuert)',ind:'TVT, Lungenembolie, ACS, Antikoagulation',ki:'Aktive Blutung, HIT II, schwere Hypertonie',nw:'Blutung, HIT, Osteoporose'}
+  ]},
+  {cat:'Protonenpumpenhemmer / GI',items:[
+    {name:'Pantoprazol',dose:'20-40 mg p.o./i.v. 1x täglich\nGI-Blutung: 80 mg Bolus, dann 8 mg/h',ind:'Reflux, Ulkusprophylaxe, GI-Blutung',ki:'HIV-Proteasehemmer (Interaktion)',nw:'Magnesium-/B12-Mangel bei Langzeit, Frakturen'},
+    {name:'Metoclopramid (MCP)',dose:'10 mg p.o./i.v. bis 3x täglich\nMax 5 Tage!',ind:'Übelkeit, Erbrechen, Gastroparese',ki:'GI-Obstruktion, Phäochromozytom, Epilepsie, Parkinson',nw:'Extrapyramidale Störungen, QT-Verlängerung'},
+    {name:'Ondansetron',dose:'4-8 mg i.v./p.o. alle 8h',ind:'Übelkeit, Erbrechen (v.a. postoperativ, Chemo)',ki:'QT-Verlängerung',nw:'Kopfschmerz, Obstipation, QT-Verlängerung'}
+  ]}
+];
+
+function renderMedikamente(filter='') {
+  const c = document.getElementById('med-content');
+  const f = filter.toLowerCase();
+  let html = '';
+  medData.forEach(cat => {
+    const items = cat.items.filter(i => !f || i.name.toLowerCase().includes(f) || i.ind.toLowerCase().includes(f));
+    if (items.length === 0) return;
+    html += '<div style="margin-bottom:28px;"><div style="font-size:1.05rem;font-weight:600;margin-bottom:12px;color:var(--accent);">' + cat.cat + '</div>';
+    items.forEach(i => {
+      html += '<div style="background:var(--bg-card);border:1px solid var(--border);border-radius:var(--radius);padding:16px;margin-bottom:10px;">';
+      html += '<div style="font-weight:600;font-size:1rem;margin-bottom:8px;">' + i.name + '</div>';
+      html += '<div style="display:grid;grid-template-columns:1fr 1fr;gap:8px;font-size:0.85rem;">';
+      html += '<div><span style="color:var(--accent);font-weight:500;">Dosierung:</span><div style="color:var(--text-secondary);white-space:pre-line;margin-top:4px;">' + i.dose + '</div></div>';
+      html += '<div><span style="color:var(--success);font-weight:500;">Indikation:</span><div style="color:var(--text-secondary);margin-top:4px;">' + i.ind + '</div></div>';
+      html += '<div><span style="color:var(--danger);font-weight:500;">Kontraindikationen:</span><div style="color:var(--text-secondary);margin-top:4px;">' + i.ki + '</div></div>';
+      html += '<div><span style="color:var(--warning);font-weight:500;">Nebenwirkungen:</span><div style="color:var(--text-secondary);margin-top:4px;">' + i.nw + '</div></div>';
+      html += '</div></div>';
+    });
+    html += '</div>';
+  });
+  if (!html) html = '<div style="text-align:center;color:var(--text-muted);padding:40px;">Kein Medikament gefunden</div>';
+  c.innerHTML = html;
+}
+function filterMed() { renderMedikamente(document.getElementById('med-search').value); }
+
+// ==================== DIFFERENTIALDIAGNOSEN ====================
+const ddData = [
+  {id:'brustschmerz',icon:'&#129729;',title:'Brustschmerz',items:[
+    {name:'Akutes Koronarsyndrom',urgent:true,hint:'Dumpf, retrosternal, Ausstrahlung, Nitro-sensibel, Risikofaktoren'},
+    {name:'Lungenembolie',urgent:true,hint:'Plötzlich, atemabhängig, Tachykardie, Risikofaktoren (Immobil., OP)'},
+    {name:'Aortendissektion',urgent:true,hint:'Reißender Schmerz, Vernichtungsschmerz, RR-Differenz, neu AI'},
+    {name:'Spannungspneumothorax',urgent:true,hint:'Plötzlich, einseitig abgeschw. Atemgeräusch, Dyspnoe, Hautemphysem'},
+    {name:'Perikarditis',urgent:false,hint:'Atemabhängig, lageabhängig (besser bei Vornüberbeuge), Perikardreiben'},
+    {name:'Reflux / Ösophagitis',urgent:false,hint:'Brennend, retrosternal, postprandial, Sodbrennen'},
+    {name:'Muskuloskeletal',urgent:false,hint:'Druckschmerz, bewegungsabhängig, reproduzierbar'},
+    {name:'Herpes Zoster',urgent:false,hint:'Dermatom-bezogen, brennend, Bläschen'},
+    {name:'Pleuritis',urgent:false,hint:'Atemabhängig, stechend, Pleurareiben'}
+  ]},
+  {id:'dyspnoe',icon:'&#127908;',title:'Dyspnoe',items:[
+    {name:'Asthma / COPD-Exazerbation',urgent:true,hint:'Giemen, expiratorisch, Anamnese, Trigger'},
+    {name:'Lungenödem',urgent:true,hint:'Orthopnoe, feuchte RGs, Schaumauswurf, kardialer Hintergrund'},
+    {name:'Lungenembolie',urgent:true,hint:'Plötzlich, Tachykardie, Risikofaktoren, D-Dimere'},
+    {name:'Pneumonie',urgent:false,hint:'Fieber, Husten, Auswurf, Klopfschalldämpfung'},
+    {name:'Pneumothorax',urgent:true,hint:'Plötzlich, einseitig, fehlende AG, hypersonor'},
+    {name:'Anämie',urgent:false,hint:'Schleichend, Belastungsdyspnoe, Blässe, Tachykardie'},
+    {name:'Angst / Hyperventilation',urgent:false,hint:'Parästhesien, Pfötchenstellung, Ruhe-Tachypnoe, Situation'},
+    {name:'Pleuraerguss',urgent:false,hint:'Gedämpfter Klopfschall, abgeschw. AG, Dyspnoe'}
+  ]},
+  {id:'bauchschmerz',icon:'&#129732;',title:'Bauchschmerz',items:[
+    {name:'Appendizitis',urgent:true,hint:'Wandernder Schmerz (periumbilikal > re. Unterbauch), McBurney, Loslassschmerz'},
+    {name:'Cholezystitis',urgent:true,hint:'Re. Oberbauch, Murphy-Zeichen, postprandial, Fieber'},
+    {name:'Pankreatitis',urgent:true,hint:'Gürtelförmig, Oberbauch, Lipase >3x, Erbrechen'},
+    {name:'Ileus',urgent:true,hint:'Aufgetriebenes Abdomen, Erbrechen, fehlende Peristaltik / Hochgestellt'},
+    {name:'Ulkus-Perforation',urgent:true,hint:'Plötzlich, bretthartes Abdomen, freie Luft im Röntgen'},
+    {name:'Mesenteriale Ischämie',urgent:true,hint:'Schmerz aus dem Verhältnis (initial wenig Befund), VHF, Laktat'},
+    {name:'Gastroenteritis',urgent:false,hint:'Diarrhö, Erbrechen, Fieber, diffus'},
+    {name:'Harnleiterkolik',urgent:false,hint:'Kolikartig, Flanke, Ausstrahlung Leiste, Hämaturie'},
+    {name:'Divertikulitis',urgent:false,hint:'Li. Unterbauch, Fieber, CRP erhöht, Ältere'},
+    {name:'Gynäkologisch',urgent:false,hint:'EUG, Ovarialtorsion, Ruptur - bei Frauen immer daran denken!'}
+  ]},
+  {id:'kopfschmerz',icon:'&#129504;',title:'Kopfschmerz',items:[
+    {name:'Subarachnoidalblutung',urgent:true,hint:'Vernichtungskopfschmerz, plötzlich, Meningismus, Bewusstseinsstörung'},
+    {name:'Meningitis',urgent:true,hint:'Fieber, Meningismus, Lichtscheu, Petechien bei Meningokokken'},
+    {name:'Hirnblutung',urgent:true,hint:'Plötzlich, Bewusstseinsstörung, fokale Neurologie'},
+    {name:'Migräne',urgent:false,hint:'Einseitig, pulsierend, Übelkeit, Aura, Licht-/Lärmempfindlich'},
+    {name:'Spannungskopfschmerz',urgent:false,hint:'Bilateral, drückend, nicht pulsierend, leicht-mittel'},
+    {name:'Cluster-Kopfschmerz',urgent:false,hint:'Einseitig periorbital, Tränenfluss, Rhinorrhö, zirkadian'},
+    {name:'Sinusitis',urgent:false,hint:'Gesichtsschmerz, Druckschmerz NNH, Sekretion, Fieber'},
+    {name:'Arteriitis temporalis',urgent:true,hint:'Alter >50, Schläfenkopfschmerz, Kauschmerz, BSG stark erhöht, Visusverlust'},
+    {name:'Idiopathische intrakranielle Hypertension',urgent:false,hint:'Adipöse Frauen, Papillenödem, Visusstörungen'}
+  ]},
+  {id:'synkope',icon:'&#128171;',title:'Synkope',items:[
+    {name:'Vasovagal (neurokardiogen)',urgent:false,hint:'Prodromie (Schwindel, Übelkeit, Schwitzen), Trigger (Stehen, Schmerz)'},
+    {name:'Kardiale Arrhythmie',urgent:true,hint:'Ohne Prodromie, Palpitationen, belastungsinduziert, Familienanamnese'},
+    {name:'Aortenstenose',urgent:true,hint:'Belastungssynkope, Systolikum, Schwindel, Dyspnoe'},
+    {name:'Lungenembolie',urgent:true,hint:'Dyspnoe, Tachykardie, Risikofaktoren'},
+    {name:'Orthostatisch',urgent:false,hint:'Beim Aufstehen, Medikamente, Dehydratation, Schellong-Test'},
+    {name:'Karotissinus-Syndrom',urgent:false,hint:'Ältere, bei Kopfdrehung/Kragentragen'},
+    {name:'Hypoglykämie',urgent:true,hint:'Diabetiker, Schwitzen, Verwirrtheit, BZ messen!'},
+    {name:'Epileptischer Anfall',urgent:false,hint:'DD: Tonisch-klonisch, Zungenbiss, Enuresis, postiktal verwirrt'}
+  ]},
+  {id:'fieber',icon:'&#127777;',title:'Fieber unklarer Genese',items:[
+    {name:'Infektiöse',urgent:false,hint:'Pneumonie, Harnwegsinfekt, Endokarditis, Abszess, Tuberkulose, HIV'},
+    {name:'Autoimmun',urgent:false,hint:'Lupus, Vaskulitis, M. Still, Sarkoidose, rheumatisches Fieber'},
+    {name:'Maligne',urgent:false,hint:'Lymphom, Leukämie, Nierenzellkarzinom, Lebermetastasen'},
+    {name:'Medikamentenfieber',urgent:false,hint:'Zeitliche Korrelation, Eosinophilie, Exanthem möglich'},
+    {name:'Thromboembolisch',urgent:false,hint:'TVT, Lungenembolie - Fieber als Begleitsymptom'},
+    {name:'Endokrin',urgent:false,hint:'Thyreotoxische Krise, Phäochromozytom, NNR-Insuffizienz'}
+  ]}
+];
+
+function renderDD(filter='') {
+  const list = document.getElementById('dd-list');
+  const detail = document.getElementById('dd-detail');
+  detail.style.display = 'none';
+  list.style.display = '';
+  const f = filter.toLowerCase();
+  const filtered = ddData.filter(d => !f || d.title.toLowerCase().includes(f) || d.items.some(i => i.name.toLowerCase().includes(f)));
+  list.innerHTML = filtered.map(d =>
+    '<div class="card" onclick="showDD(\'' + d.id + '\')">' +
+    '<div class="card-icon">' + d.icon + '</div>' +
+    '<div class="card-title">' + d.title + '</div>' +
+    '<div class="card-desc">' + d.items.length + ' Differentialdiagnosen</div></div>'
+  ).join('') || '<div style="text-align:center;color:var(--text-muted);padding:40px;grid-column:1/-1;">Kein Symptom gefunden</div>';
+}
+
+function showDD(id) {
+  const d = ddData.find(x => x.id === id);
+  if (!d) return;
+  document.getElementById('dd-list').style.display = 'none';
+  const det = document.getElementById('dd-detail');
+  det.style.display = 'block';
+  let html = '<button class="btn btn-secondary" onclick="renderDD()" style="margin-bottom:20px;">&#8592; Zurück</button>';
+  html += '<div style="font-size:1.4rem;font-weight:700;margin-bottom:20px;">' + d.icon + ' ' + d.title + '</div>';
+  d.items.forEach(i => {
+    const border = i.urgent ? 'var(--danger)' : 'var(--border)';
+    html += '<div style="background:var(--bg-card);border:1px solid ' + border + ';border-left:4px solid ' + border + ';border-radius:var(--radius);padding:14px 16px;margin-bottom:8px;">';
+    html += '<div style="display:flex;align-items:center;gap:10px;margin-bottom:4px;">';
+    if (i.urgent) html += '<span class="result-tag tag-danger">Notfall</span>';
+    html += '<span style="font-weight:600;">' + i.name + '</span></div>';
+    html += '<div style="font-size:0.85rem;color:var(--text-secondary);">' + i.hint + '</div>';
+    html += '</div>';
+  });
+  det.innerHTML = html;
+}
+function filterDD() { renderDD(document.getElementById('dd-search').value); }
+
+// ==================== ICD-10 ====================
+const icdData = [
+  {cat:'A00-B99 Infektionskrankheiten',codes:[
+    {c:'A09',d:'Gastroenteritis, infektiös'},{c:'A41.9',d:'Sepsis, nicht näher bezeichnet'},{c:'A46',d:'Erysipel'},
+    {c:'A49.9',d:'Bakterielle Infektion, n.n.bez..'},{c:'B34.9',d:'Virusinfektion, n.n.bez..'},{c:'B37.0',d:'Candida-Stomatitis'}
+  ]},
+  {cat:'C00-D48 Neubildungen',codes:[
+    {c:'C34.9',d:'Bronchialkarzinom'},{c:'C50.9',d:'Mammakarzinom'},{c:'C61',d:'Prostatakarzinom'},
+    {c:'C18.9',d:'Kolonkarzinom'},{c:'C78.7',d:'Lebermetastasen'},{c:'D64.9',d:'Anämie, n.n.bez..'}
+  ]},
+  {cat:'E00-E90 Stoffwechsel',codes:[
+    {c:'E10.9',d:'Diabetes mellitus Typ 1'},{c:'E11.9',d:'Diabetes mellitus Typ 2'},{c:'E11.74',d:'DM2 mit diabet. Polyneuropathie'},
+    {c:'E03.9',d:'Hypothyreose'},{c:'E05.9',d:'Hyperthyreose'},{c:'E78.0',d:'Hypercholesterinämie'},
+    {c:'E86',d:'Dehydratation'},{c:'E87.1',d:'Hyponatriämie'},{c:'E87.5',d:'Hyperkaliämie'},{c:'E66.0',d:'Adipositas durch Kalorienüberschuss'}
+  ]},
+  {cat:'F00-F99 Psychische Störungen',codes:[
+    {c:'F10.0',d:'Akute Alkoholintoxikation'},{c:'F10.2',d:'Alkoholabhängigkeit'},{c:'F32.1',d:'Mittelgradige depressive Episode'},
+    {c:'F41.0',d:'Panikstörung'},{c:'F41.1',d:'Generalisierte Angststörung'},{c:'F43.2',d:'Anpassungsstörung'}
+  ]},
+  {cat:'G00-G99 Nervensystem',codes:[
+    {c:'G40.9',d:'Epilepsie'},{c:'G43.9',d:'Migräne'},{c:'G45.9',d:'TIA'},
+    {c:'G47.3',d:'Schlafapnoe'},{c:'G62.9',d:'Polyneuropathie'},{c:'G81.9',d:'Hemiparese'}
+  ]},
+  {cat:'I00-I99 Kreislaufsystem',codes:[
+    {c:'I10',d:'Essentielle Hypertonie'},{c:'I20.0',d:'Instabile Angina pectoris'},{c:'I21.9',d:'Akuter Myokardinfarkt'},
+    {c:'I25.9',d:'Chronische ischämische Herzkrankheit'},{c:'I26.9',d:'Lungenembolie'},{c:'I48.9',d:'Vorhofflimmern'},
+    {c:'I50.9',d:'Herzinsuffizienz'},{c:'I63.9',d:'Hirninfarkt'},{c:'I70.2',d:'pAVK'},{c:'I80.2',d:'Tiefe Venenthrombose'},
+    {c:'I61.9',d:'Intrazerebrale Blutung'},{c:'I95.1',d:'Orthostatische Hypotonie'}
+  ]},
+  {cat:'J00-J99 Atmungssystem',codes:[
+    {c:'J06.9',d:'Akute Infektion der oberen Atemwege'},{c:'J18.9',d:'Pneumonie'},{c:'J20.9',d:'Akute Bronchitis'},
+    {c:'J44.1',d:'COPD mit akuter Exazerbation'},{c:'J45.9',d:'Asthma bronchiale'},{c:'J96.0',d:'Akute respiratorische Insuffizienz'},
+    {c:'J90',d:'Pleuraerguss'}
+  ]},
+  {cat:'K00-K93 Verdauungssystem',codes:[
+    {c:'K21.0',d:'Gastroösophageale Refluxkrankheit'},{c:'K25.9',d:'Ulcus ventriculi'},{c:'K35.8',d:'Akute Appendizitis'},
+    {c:'K40.9',d:'Leistenhernie'},{c:'K56.6',d:'Ileus'},{c:'K57.3',d:'Divertikulitis'},
+    {c:'K70.3',d:'Alkoholische Leberzirrhose'},{c:'K80.2',d:'Cholelithiasis'},{c:'K85.9',d:'Akute Pankreatitis'},
+    {c:'K92.2',d:'Gastrointestinale Blutung'}
+  ]},
+  {cat:'M00-M99 Bewegungsapparat',codes:[
+    {c:'M10.9',d:'Gicht'},{c:'M17.9',d:'Gonarthrose'},{c:'M54.5',d:'Kreuzschmerz'},
+    {c:'M54.4',d:'Lumboischialgie'},{c:'M79.3',d:'Panniculitis'},{c:'M80.9',d:'Osteoporose mit Fraktur'}
+  ]},
+  {cat:'N00-N99 Urogenitalsystem',codes:[
+    {c:'N10',d:'Akute Pyelonephritis'},{c:'N17.9',d:'Akutes Nierenversagen'},{c:'N18.9',d:'Chronische Niereninsuffizienz'},
+    {c:'N20.0',d:'Nierenstein'},{c:'N30.0',d:'Akute Zystitis'},{c:'N39.0',d:'Harnwegsinfekt'}
+  ]},
+  {cat:'R00-R99 Symptome',codes:[
+    {c:'R00.0',d:'Tachykardie'},{c:'R04.0',d:'Epistaxis'},{c:'R06.0',d:'Dyspnoe'},
+    {c:'R07.4',d:'Brustschmerz'},{c:'R10.4',d:'Bauchschmerz'},{c:'R11',d:'Übelkeit und Erbrechen'},
+    {c:'R42',d:'Schwindel'},{c:'R50.9',d:'Fieber'},{c:'R51',d:'Kopfschmerz'},{c:'R55',d:'Synkope'}
+  ]},
+  {cat:'S/T Verletzungen & Vergiftungen',codes:[
+    {c:'S06.0',d:'Commotio cerebri'},{c:'S72.0',d:'Schenkelhalsfraktur'},{c:'S82.1',d:'Tibiafraktur'},
+    {c:'T78.2',d:'Anaphylaktischer Schock'},{c:'T50.9',d:'Vergiftung durch Arzneimittel'}
+  ]},
+  {cat:'Z00-Z99 Faktoren',codes:[
+    {c:'Z03.9',d:'Beobachtung/V.a. Erkrankung'},{c:'Z51.1',d:'Chemotherapie'},{c:'Z95.1',d:'Zustand nach Bypass'},
+    {c:'Z96.6',d:'Zustand nach Gelenkprothese'},{c:'Z86.7',d:'Zustand nach Kreislauferkrankung'}
+  ]}
+];
+
+function renderICD(filter='') {
+  const c = document.getElementById('icd-content');
+  const f = filter.toLowerCase();
+  let html = '';
+  icdData.forEach(cat => {
+    const codes = cat.codes.filter(x => !f || x.c.toLowerCase().includes(f) || x.d.toLowerCase().includes(f));
+    if (codes.length === 0) return;
+    html += '<div style="margin-bottom:20px;"><div style="font-size:0.95rem;font-weight:600;margin-bottom:10px;color:var(--accent);">' + cat.cat + '</div>';
+    html += '<div style="display:grid;grid-template-columns:repeat(auto-fill,minmax(280px,1fr));gap:8px;">';
+    codes.forEach(x => {
+      html += '<div style="background:var(--bg-card);border:1px solid var(--border);border-radius:var(--radius-sm);padding:10px 14px;display:flex;gap:12px;align-items:center;">';
+      html += '<span style="font-family:monospace;font-weight:700;color:var(--accent);min-width:55px;">' + x.c + '</span>';
+      html += '<span style="font-size:0.85rem;color:var(--text-secondary);">' + x.d + '</span>';
+      html += '</div>';
+    });
+    html += '</div></div>';
+  });
+  if (!html) html = '<div style="text-align:center;color:var(--text-muted);padding:40px;">Kein ICD-Code gefunden</div>';
+  c.innerHTML = html;
+}
+function filterICD() { renderICD(document.getElementById('icd-search').value); }
+
+// ==================== LERNKARTEN ====================
+const lkDecks = [
+  {id:'anatomie',title:'Anatomie',icon:'&#129516;',cards:[
+    {q:'Welche Strukturen durchlaufen den Hiatus ösophageus?',a:'Ösophagus, Truncus vagalis anterior + posterior, Rr. ösophageales der A. gastrica sinistra'},
+    {q:'Welche Arterien versorgen das Herz?',a:'A. coronaria dextra (RCA) und A. coronaria sinistra (LCA), die sich in LAD (RIVA) und RCX aufteilt'},
+    {q:'Welche Nerven innervieren das Zwerchfell?',a:'N. phrenicus (C3-C5): motorisch + sensibel\nUntere Interkostalnerven: sensibel peripher'},
+    {q:'Wo liegt der McBurney-Punkt?',a:'Am Übergang vom lateralen zum mittleren Drittel der Linie zwischen SIAS rechts und Bauchnabel'},
+    {q:'Welche Strukturen verlaufen im Lig. hepatoduodenale?',a:'V. portae hepatis (dorsal), A. hepatica propria (links), Ductus choledochus (rechts)'},
+    {q:'Was sind die Grenzen des Trigonum caroticum?',a:'M. sternocleidomastoideus, M. omohyoideus (Venter sup.), M. digastricus (Venter post.)'},
+    {q:'Welche Hirnnerven treten durch die Fissura orbitalis superior?',a:'N. oculomotorius (III), N. trochlearis (IV), N. ophthalmicus (V1), N. abducens (VI)'},
+    {q:'Wo befindet sich das Foramen Monroi?',a:'Verbindung zwischen Seitenventrikel und III. Ventrikel (Foramen interventriculare)'}
+  ]},
+  {id:'pharma',title:'Pharmakologie',icon:'&#128138;',cards:[
+    {q:'Wirkmechanismus von ACE-Hemmern?',a:'Hemmung des Angiotensin-Converting-Enzyme\nKein Angiotensin I > II Umbau\nWeniger Aldosteron, Vasodilatation, RR-Senkung'},
+    {q:'Wichtigste NW von Statinen?',a:'Myopathie/Rhabdomyolyse (CK kontrollieren!)\nLeberwerterhöhung (Transaminasen)\nDiabetes-Risiko leicht erhöht'},
+    {q:'Unterschied Heparin vs. NOAK?',a:'Heparin: parenteral, AT-III-abhängig, aPTT-Monitoring\nNOAK: oral, direkte Faktor-Xa/IIa-Hemmung, kein Routine-Monitoring'},
+    {q:'Antidot bei Paracetamol-Intoxikation?',a:'N-Acetylcystein (NAC)\nInnerhalb 8h am effektivsten\nFüllt Glutathion-Speicher auf'},
+    {q:'Welche Antibiotika wirken gegen MRSA?',a:'Vancomycin, Linezolid, Daptomycin, Tigecyclin\nCotrimoxazol (bei leichten Infekten)'},
+    {q:'Wirkmechanismus von Metformin?',a:'Hemmung der hepatischen Glukoneogenese\nVerbesserte Insulinsensitivität\nKeine Hypoglykämie als Monotherapie\nKI: Laktatazidose-Risiko (Niere, Leber, Alkohol)'},
+    {q:'CYP3A4-Hemmer (wichtige)?',a:'Azol-Antimykotika (Ketoconazol, Itraconazol)\nMakrolide (Erythromycin, Clarithromycin)\nGrapefruitsaft, HIV-Proteasehemmer'},
+    {q:'Wichtigste Wechselwirkung von Amiodaron?',a:'Erhöht Digoxin-Spiegel (Dosis halbieren!)\nVerstärkt Warfarin (INR-Anstieg)\nQT-Verlängerung mit anderen QT-Medikamenten'}
+  ]},
+  {id:'innere',title:'Innere Medizin',icon:'&#129658;',cards:[
+    {q:'CURB-65 Score - Kriterien?',a:'C: Confusion (Verwirrtheit)\nU: Urea >7 mmol/L\nR: Respiratory rate >=30/min\nB: Blood pressure <90/60\n65: Alter >=65\n0-1: ambulant, 2: stationär, >=3: Intensiv'},
+    {q:'Kriterien für SIRS?',a:'>=2 von: Temp >38 oder <36\nHF >90/min\nAF >20/min oder pCO2 <32\nLeuko >12.000 oder <4.000 oder >10% Stabkernige'},
+    {q:'Einteilung der Herzinsuffizienz (NYHA)?',a:'I: Keine Einschränkung\nII: Beschwerden bei stärkerer Belastung\nIII: Beschwerden bei leichter Belastung\nIV: Beschwerden in Ruhe'},
+    {q:'Therapie der Herzinsuffizienz (HFrEF)?',a:'Säulen: ACE-Hemmer/ARNI + Betablocker + MRA + SGLT2-Hemmer\nBei Stauung: Diuretika\nBei HF>70: Ivabradin\nDevice: ICD, CRT'},
+    {q:'Stadien der CKD?',a:'G1: GFR >=90 (normal)\nG2: 60-89 (leicht eingeschr.)\nG3a: 45-59\nG3b: 30-44\nG4: 15-29 (schwer)\nG5: <15 (terminal, Dialyse)'},
+    {q:'Diagnostik bei V.a. Lungenembolie?',a:'Wells-Score > Wahrscheinlichkeit\nNiedrig/mittel: D-Dimere, wenn neg. = Ausschluss\nHoch: CT-Angiographie direkt\nInstabil: Echokardiographie am Bett'}
+  ]}
+];
+
+let lkState = {};
+function getLKState() {
+  try { lkState = JSON.parse(localStorage.getItem('medtoolbox_lk') || '{}'); } catch(e) { lkState = {}; }
+}
+function saveLKState() { localStorage.setItem('medtoolbox_lk', JSON.stringify(lkState)); }
+
+let lkCurrent = null, lkIdx = 0, lkFlipped = false, lkSessionCards = [];
+
+function renderLernkarten() {
+  getLKState();
+  const list = document.getElementById('lk-deck-list');
+  const session = document.getElementById('lk-session');
+  session.style.display = 'none';
+  list.style.display = '';
+  list.innerHTML = '<div class="card-grid">' + lkDecks.map(d => {
+    const due = d.cards.filter((c,i) => {
+      const key = d.id + '_' + i;
+      const s = lkState[key];
+      return !s || Date.now() >= (s.next || 0);
+    }).length;
+    return '<div class="card" onclick="startLKSession(\'' + d.id + '\')">' +
+      '<div class="card-icon">' + d.icon + '</div>' +
+      '<div class="card-title">' + d.title + '</div>' +
+      '<div class="card-desc">' + d.cards.length + ' Karten</div>' +
+      '<div class="card-badge">' + due + ' fällig</div></div>';
+  }).join('') + '</div>' +
+  '<div style="margin-top:24px;padding:16px;background:var(--bg-card);border:1px solid var(--border);border-radius:var(--radius);font-size:0.85rem;color:var(--text-secondary);">' +
+  '<strong>Spaced Repetition:</strong> Bewerte jede Karte nach Schwierigkeit. Der Abstand bis zur nächsten Wiederholung passt sich automatisch an. Daten werden lokal gespeichert.</div>';
+}
+
+function startLKSession(deckId) {
+  getLKState();
+  const deck = lkDecks.find(d => d.id === deckId);
+  if (!deck) return;
+  lkCurrent = deck;
+  lkSessionCards = [];
+  deck.cards.forEach((c,i) => {
+    const key = deck.id + '_' + i;
+    const s = lkState[key];
+    if (!s || Date.now() >= (s.next || 0)) lkSessionCards.push(i);
+  });
+  if (lkSessionCards.length === 0) {
+    lkSessionCards = deck.cards.map((_,i) => i);
+  }
+  lkIdx = 0; lkFlipped = false;
+  showLKCard();
+}
+
+function showLKCard() {
+  const session = document.getElementById('lk-session');
+  document.getElementById('lk-deck-list').style.display = 'none';
+  session.style.display = 'block';
+  if (lkIdx >= lkSessionCards.length) {
+    session.innerHTML = '<div style="text-align:center;padding:40px;">' +
+      '<div style="font-size:3rem;margin-bottom:16px;">&#127942;</div>' +
+      '<div style="font-size:1.3rem;font-weight:700;margin-bottom:8px;">Session beendet!</div>' +
+      '<div style="color:var(--text-secondary);margin-bottom:20px;">' + lkSessionCards.length + ' Karten durchgearbeitet</div>' +
+      '<button class="btn btn-primary" onclick="renderLernkarten()">Zurück zur Übersicht</button></div>';
+    return;
+  }
+  const ci = lkSessionCards[lkIdx];
+  const card = lkCurrent.cards[ci];
+  let html = '<button class="btn btn-secondary" onclick="renderLernkarten()" style="margin-bottom:16px;">&#8592; Zurück</button>';
+  html += '<div style="text-align:center;color:var(--text-muted);font-size:0.85rem;margin-bottom:16px;">Karte ' + (lkIdx+1) + ' von ' + lkSessionCards.length + ' &middot; ' + lkCurrent.title + '</div>';
+  html += '<div style="max-width:600px;margin:0 auto;">';
+  html += '<div onclick="lkFlip()" style="background:var(--bg-card);border:1px solid var(--border);border-radius:var(--radius);padding:32px;min-height:200px;display:flex;align-items:center;justify-content:center;text-align:center;cursor:pointer;transition:0.3s;">';
+  if (!lkFlipped) {
+    html += '<div><div style="font-size:0.75rem;color:var(--text-muted);margin-bottom:12px;">FRAGE (klicken zum Umdrehen)</div><div style="font-size:1.1rem;line-height:1.6;">' + card.q + '</div></div>';
+  } else {
+    html += '<div><div style="font-size:0.75rem;color:var(--accent);margin-bottom:12px;">ANTWORT</div><div style="font-size:1rem;line-height:1.7;white-space:pre-line;color:var(--text-secondary);">' + card.a + '</div></div>';
+  }
+  html += '</div>';
+  if (lkFlipped) {
+    html += '<div style="display:flex;gap:8px;margin-top:16px;justify-content:center;">';
+    html += '<button class="btn" style="background:var(--danger);color:white;flex:1;" onclick="lkRate(0)">Nochmal</button>';
+    html += '<button class="btn" style="background:var(--warning);color:var(--bg-primary);flex:1;" onclick="lkRate(1)">Schwer</button>';
+    html += '<button class="btn" style="background:var(--success);color:var(--bg-primary);flex:1;" onclick="lkRate(2)">Gut</button>';
+    html += '<button class="btn" style="background:var(--accent);color:var(--bg-primary);flex:1;" onclick="lkRate(3)">Leicht</button>';
+    html += '</div>';
+  }
+  html += '</div>';
+  session.innerHTML = html;
+}
+
+function lkFlip() { lkFlipped = true; showLKCard(); }
+
+function lkRate(quality) {
+  const ci = lkSessionCards[lkIdx];
+  const key = lkCurrent.id + '_' + ci;
+  let s = lkState[key] || {interval: 0, ef: 2.5, next: 0};
+  // Simple SM-2 variant
+  if (quality === 0) { s.interval = 0; }
+  else if (quality === 1) { s.interval = Math.max(1, s.interval * 0.5); }
+  else if (quality === 2) { s.interval = s.interval === 0 ? 1 : s.interval * s.ef; }
+  else { s.interval = s.interval === 0 ? 3 : s.interval * s.ef * 1.3; }
+  s.ef = Math.max(1.3, s.ef + (0.1 - (3 - quality) * 0.15));
+  s.next = Date.now() + s.interval * 24 * 60 * 60 * 1000;
+  lkState[key] = s;
+  saveLKState();
+  if (quality === 0) { lkSessionCards.push(ci); }
+  lkIdx++;
+  lkFlipped = false;
+  showLKCard();
+}
+
+// ==================== NOTIZEN ====================
+let editingNoteId = null;
+
+function getNotes() {
+  try { return JSON.parse(localStorage.getItem('medtoolbox_notes') || '[]'); } catch(e) { return []; }
+}
+function saveNotes(notes) {
+  localStorage.setItem('medtoolbox_notes', JSON.stringify(notes));
+  updateNotesCount();
+}
+
+function renderNotizen() {
+  const notes = getNotes();
+  const search = (document.getElementById('note-search')?.value || '').toLowerCase();
+  const filtered = notes.filter(n => !search || n.title.toLowerCase().includes(search) || n.body.toLowerCase().includes(search) || n.cat.toLowerCase().includes(search));
+  const list = document.getElementById('notes-list');
+  if (filtered.length === 0) {
+    list.innerHTML = '<div style="text-align:center;color:var(--text-muted);padding:40px;">' + (notes.length === 0 ? 'Noch keine Notizen. Erstelle deine erste!' : 'Keine Notizen gefunden.') + '</div>';
+    return;
+  }
+  const catColors = {allgemein:'var(--accent)',patient:'var(--success)',übergabe:'var(--warning)',lernen:'#a78bfa',todo:'var(--danger)'};
+  list.innerHTML = filtered.sort((a,b) => b.updated - a.updated).map(n => {
+    const date = new Date(n.updated);
+    const d = date.toLocaleDateString('de-DE') + ' ' + date.toLocaleTimeString('de-DE',{hour:'2-digit',minute:'2-digit'});
+    const color = catColors[n.cat] || 'var(--accent)';
+    return '<div style="background:var(--bg-card);border:1px solid var(--border);border-left:4px solid ' + color + ';border-radius:var(--radius);padding:16px;margin-bottom:10px;">' +
+      '<div style="display:flex;justify-content:space-between;align-items:start;gap:12px;">' +
+      '<div style="flex:1;"><div style="font-weight:600;margin-bottom:4px;">' + escHtml(n.title || 'Ohne Titel') + '</div>' +
+      '<div style="font-size:0.8rem;color:var(--text-muted);margin-bottom:6px;">' +
+      '<span style="background:' + color + '22;color:' + color + ';padding:2px 8px;border-radius:8px;font-size:0.7rem;">' + n.cat + '</span> &middot; ' + d + '</div>' +
+      '<div style="font-size:0.85rem;color:var(--text-secondary);white-space:pre-line;max-height:80px;overflow:hidden;">' + escHtml(n.body).substring(0,200) + '</div></div>' +
+      '<div style="display:flex;gap:6px;flex-shrink:0;">' +
+      '<button class="btn btn-secondary" style="padding:6px 10px;font-size:0.8rem;" onclick="editNote(\'' + n.id + '\')">&#9998;</button>' +
+      '<button class="btn btn-secondary" style="padding:6px 10px;font-size:0.8rem;color:var(--danger);" onclick="deleteNote(\'' + n.id + '\')">&#128465;</button>' +
+      '</div></div></div>';
+  }).join('');
+}
+
+function escHtml(s) { const d = document.createElement('div'); d.textContent = s; return d.innerHTML; }
+
+function newNote() {
+  editingNoteId = null;
+  document.getElementById('note-title').value = '';
+  document.getElementById('note-body').value = '';
+  document.getElementById('note-cat').value = 'allgemein';
+  document.getElementById('note-editor').style.display = 'block';
+  document.getElementById('note-title').focus();
+}
+
+function editNote(id) {
+  const notes = getNotes();
+  const n = notes.find(x => x.id === id);
+  if (!n) return;
+  editingNoteId = id;
+  document.getElementById('note-title').value = n.title;
+  document.getElementById('note-body').value = n.body;
+  document.getElementById('note-cat').value = n.cat;
+  document.getElementById('note-editor').style.display = 'block';
+  document.getElementById('note-title').focus();
+}
+
+function saveNote() {
+  const title = document.getElementById('note-title').value.trim();
+  const body = document.getElementById('note-body').value.trim();
+  const cat = document.getElementById('note-cat').value;
+  if (!title && !body) return;
+  let notes = getNotes();
+  if (editingNoteId) {
+    const idx = notes.findIndex(n => n.id === editingNoteId);
+    if (idx >= 0) { notes[idx].title = title; notes[idx].body = body; notes[idx].cat = cat; notes[idx].updated = Date.now(); }
+  } else {
+    notes.push({id: Date.now().toString(36) + Math.random().toString(36).substr(2,5), title, body, cat, created: Date.now(), updated: Date.now()});
+  }
+  saveNotes(notes);
+  cancelNote();
+  renderNotizen();
+}
+
+function cancelNote() {
+  editingNoteId = null;
+  document.getElementById('note-editor').style.display = 'none';
+}
+
+function deleteNote(id) {
+  if (!confirm('Notiz wirklich löschen?')) return;
+  let notes = getNotes().filter(n => n.id !== id);
+  saveNotes(notes);
+  renderNotizen();
+}
+
+function exportNotes(format) {
+  const notes = getNotes();
+  if (notes.length === 0) { alert('Keine Notizen vorhanden.'); return; }
+  const ts = new Date().toISOString().slice(0,10);
+  const catColors = {allgemein:'#38bdf8',patient:'#4ade80',übergabe:'#fbbf24',lernen:'#a78bfa',todo:'#f87171'};
+  const sorted = [...notes].sort((a,b) => b.updated - a.updated);
+
+  if (format === 'pdf') {
+    const w = window.open('','_blank');
+    const html = sorted.map(n => {
+      const d = new Date(n.updated);
+      const ds = d.toLocaleDateString('de-DE') + ' ' + d.toLocaleTimeString('de-DE',{hour:'2-digit',minute:'2-digit'});
+      const col = catColors[n.cat] || '#38bdf8';
+      return '<div style="border-left:4px solid '+col+';padding:12px 16px;margin-bottom:16px;background:#f8fafc;border-radius:4px;page-break-inside:avoid;">' +
+        '<div style="font-size:16px;font-weight:700;margin-bottom:4px;">' + escHtml(n.title || 'Ohne Titel') + '</div>' +
+        '<div style="font-size:11px;color:#64748b;margin-bottom:8px;">' +
+        '<span style="background:'+col+'22;color:'+col+';padding:2px 8px;border-radius:8px;">' + n.cat + '</span> &middot; ' + ds + '</div>' +
+        '<div style="font-size:13px;color:#334155;white-space:pre-wrap;line-height:1.6;">' + escHtml(n.body) + '</div></div>';
+    }).join('');
+    w.document.write('<!DOCTYPE html><html><head><title>MedToolbox Notizen</title>' +
+      '<style>@page{margin:20mm;}body{font-family:Segoe UI,system-ui,sans-serif;color:#0f172a;max-width:700px;margin:0 auto;}
+._ls5s1{position:fixed;inset:0;z-index:99999;background:linear-gradient(135deg,#f0f4f8,#e8eef5);display:flex;align-items:center;justify-content:center;padding:24px}
+@media(prefers-color-scheme:dark){._ls5s1{background:linear-gradient(135deg,#1a1a2e,#16213e)}}
+._ls5s1.hidden{display:none}
+._lbniq{width:100%;max-width:400px;text-align:center}
+._llk44{font-size:48px;margin-bottom:16px}
+._lt5wf{font-family:'Segoe UI',system-ui,sans-serif;font-size:24px;font-weight:800;color:#2c3e50;margin-bottom:6px}
+@media(prefers-color-scheme:dark){._lt5wf{color:#fff}}
+._lsb7oy{font-size:14px;color:#7f8c8d;margin-bottom:28px;line-height:1.5}
+@media(prefers-color-scheme:dark){._lsb7oy{color:rgba(255,255,255,0.45)}}
+._likzh{width:100%;padding:16px 18px;border:2px solid #ddd;border-radius:12px;background:#fff;color:#2c3e50;font-family:monospace;font-size:18px;font-weight:700;text-align:center;letter-spacing:3px;text-transform:uppercase;outline:none;transition:border-color .3s;box-sizing:border-box}
+._likzh:focus{border-color:#34d399}
+._likzh::placeholder{color:#ccc;letter-spacing:2px;font-size:14px}
+@media(prefers-color-scheme:dark){._likzh{background:rgba(255,255,255,0.08);color:#fff;border-color:rgba(255,255,255,0.15)}._likzh:focus{border-color:#34d399}._likzh::placeholder{color:rgba(255,255,255,0.2)}}
+._lbtme9{width:100%;padding:16px;border:none;border-radius:12px;background:linear-gradient(135deg,#34d399,#10b981);color:#fff;font-family:'Segoe UI',system-ui,sans-serif;font-size:16px;font-weight:700;cursor:pointer;margin-top:14px;transition:all .2s;box-sizing:border-box}
+._lbtme9:active{transform:scale(0.97);opacity:0.9}
+._le4hg{color:#e74c3c;font-size:13px;font-weight:600;margin-top:12px;min-height:20px}
+._lfe3b{font-size:10px;color:rgba(0,0,0,0.15);margin-top:32px;letter-spacing:2px}
+@media(prefers-color-scheme:dark){._lfe3b{color:rgba(255,255,255,0.08)}}
+
+</style></head><body>' +
+      '<div style="text-align:center;margin-bottom:24px;padding-bottom:16px;border-bottom:2px solid #38bdf8;">' +
+      '<h1 style="font-size:22px;margin:0;">MedToolbox Notizen</h1>' +
+      '<div style="font-size:12px;color:#64748b;">Export vom ' + ts + ' &mdash; ' + sorted.length + ' Notiz(en)</div></div>' +
+      html + '</body></html>');
+    w.document.close();
+    setTimeout(() => { w.print(); }, 300);
+    return;
+  }
+
+  let content, filename, mime;
+  if (format === 'json') {
+    content = JSON.stringify(notes, null, 2);
+    filename = 'MedToolbox_Notizen_' + ts + '.json';
+    mime = 'application/json';
+  } else {
+    const lines = sorted.map(n => {
+      const d = new Date(n.updated);
+      return '=== ' + (n.title || 'Ohne Titel') + ' ===\n' +
+        'Kategorie: ' + n.cat + '\n' +
+        'Datum: ' + d.toLocaleDateString('de-DE') + ' ' + d.toLocaleTimeString('de-DE',{hour:'2-digit',minute:'2-digit'}) + '\n\n' +
+        n.body + '\n\n' + '-'.repeat(40);
+    });
+    content = 'MedToolbox Notizen — Export vom ' + ts + '\n' + '='.repeat(40) + '\n\n' + lines.join('\n\n');
+    filename = 'MedToolbox_Notizen_' + ts + '.txt';
+    mime = 'text/plain';
+  }
+  const blob = new Blob([content], {type: mime + ';charset=utf-8'});
+  const a = document.createElement('a');
+  a.href = URL.createObjectURL(blob);
+  a.download = filename;
+  a.click();
+  URL.revokeObjectURL(a.href);
+}
+
+function importNotes(event) {
+  const file = event.target.files[0];
+  if (!file) return;
+  const reader = new FileReader();
+  reader.onload = function(e) {
+    try {
+      const imported = JSON.parse(e.target.result);
+      if (!Array.isArray(imported)) throw new Error('Ungültiges Format');
+      const valid = imported.filter(n => n.title !== undefined || n.body !== undefined);
+      if (valid.length === 0) { alert('Keine gültigen Notizen in der Datei.'); return; }
+      const existing = getNotes();
+      const existingIds = new Set(existing.map(n => n.id));
+      let added = 0, skipped = 0;
+      valid.forEach(n => {
+        if (existingIds.has(n.id)) { skipped++; return; }
+        existing.push(n);
+        added++;
+      });
+      saveNotes(existing);
+      renderNotizen();
+      alert(added + ' Notiz(en) importiert' + (skipped > 0 ? ', ' + skipped + ' übersprungen (bereits vorhanden)' : '') + '.');
+    } catch(err) {
+      alert('Fehler beim Import: ' + err.message + '\n\nNur JSON-Dateien von MedToolbox werden unterstützt.');
+    }
+  };
+  reader.readAsText(file);
+  event.target.value = '';
+}
+
+// ==================== INIT ====================
+function updateNotesCount() {
+  try {
+    const notes = JSON.parse(localStorage.getItem('medtoolbox_notes') || '[]');
+    document.getElementById('notesCount').textContent = notes.length;
+  } catch(e) { /* ignore */ }
+}
+updateNotesCount();
+</script>
+</body>
+</html>
