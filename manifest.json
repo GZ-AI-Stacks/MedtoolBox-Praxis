@@ -1,0 +1,9 @@
+{
+  "name": "MedToolbox · Praxis",
+  "short_name": "MedToolbox",
+  "start_url": "./",
+  "display": "standalone",
+  "background_color": "#06080a",
+  "theme_color": "#38bdf8",
+  "icons": [{"src": "icon.svg", "sizes": "any", "type": "image/svg+xml"}]
+}

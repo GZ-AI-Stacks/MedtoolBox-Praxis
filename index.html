@@ -2,6 +2,7 @@
 <html lang="de">
 <head>
 <meta charset="UTF-8">
+<link rel="manifest" href="manifest.json">
 <meta name="viewport" content="width=device-width, initial-scale=1.0">
 <title>MedToolbox - Medizinische Offline-App</title>
 <link rel="preconnect" href="https://fonts.googleapis.com">
@@ -720,7 +721,7 @@ body {
 </div>
 </div>
 <script>
-var _0x400c55='mt-license';
+var _0x400c55='mt-license-praxis';
 function _0xca4564(s){var h=0x7A39E1B;for(var i=0;i<s.length;i++){h=((h<<5)-h+s.charCodeAt(i))|0;h=(h^(h>>>16))|0;h=(h*0x45d9f3b)|0;}return Math.abs(h);}
 function _0x4a0f93(p){var p1=_0xca4564(p[0]+'gz');var p2=_0xca4564(p[1]+'ai');var c=(p1^p2^0x4D5444)>>>0;var k=(c%89990)+10000;return k.toString().substring(0,4);}
 function _0xa644a4(key){if(!key)return false;var k=key.toUpperCase().trim();var m=k.match(/^MT-([A-Z0-9]{4})-([A-Z0-9]{4})-([A-Z0-9]{4})$/);if(!m)return false;return m[3]===_0x4a0f93([m[1],m[2]]);}
@@ -2649,5 +2650,6 @@ function updateNotesCount() {
 }
 updateNotesCount();
 </script>
+<script>if('serviceWorker' in navigator){navigator.serviceWorker.register('./sw.js').catch(()=>{});}</script>
 </body>
 </html>
